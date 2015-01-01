@@ -3,7 +3,7 @@
 
 Sparkoomba::Sparkoomba()
 {
-    Sparkoomba(56000,0);
+    Sparkoomba(57600,0);
 }
 Sparkoomba::Sparkoomba(int baud, int ddPin)
 {
@@ -33,7 +33,7 @@ void Sparkoomba::stop()
 }
 void Sparkoomba::updateSensors()
 {
-    //printf("Updating Sensors...");
+    // Populate the sensors with arbitrary data
     this->sensorbytes[0] = 0x00;    // 0    Bumps and Wheel Drops
     this->sensorbytes[1] = 0x00;    //1    Wall
     this->sensorbytes[2] = 0x00;    //2    Cliff Left

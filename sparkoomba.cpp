@@ -1,6 +1,26 @@
 #include "sparkoomba.h"
 #include <stdio.h>
 
+#if defined (__cplusplus)
+#warning "Compiling as a C++ Application"
+#else
+#if defined (SPARK)
+#warning "Compiling as Spark Firmware"
+#error "Not Yet Supported"
+#include "application.h"
+#else
+#if defined(ARDUINO) && ARDUINO >= 100
+#warning "Compiling as Arduino Firmware"
+#error "Not Yet Supported"
+#include "Arduino.h"
+#else
+#warning "Compiling as old Arduino Firmware"
+#error "Not Yet Supported"
+#include "WProgram.h"
+#endif
+#endif
+#endif
+
 Sparkoomba::Sparkoomba()
 {
     Sparkoomba(57600,0);

@@ -1,0 +1,8 @@
+# Netbeans Stuff
+nbproject/*
+
+# Build Files
+build/*
+dist/*
+Makefile
+*.inc

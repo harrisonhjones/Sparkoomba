@@ -113,6 +113,20 @@ public:
    
     // Sensor Setters
     #ifdef ALLOWSENSOROVERRIDE
+    void setBumpsWheelDrops(unsigned char dBumbsWheelDrops);
+    void setWall(bool dWall);
+    void setCliffLeft(bool dCliffLeft);
+    void setCliffFrontLeft(bool dCliffFrontLeft);
+    void setCliffFrontRight(bool dCliffFrontRight);
+    void setCliffRight(bool dCliffRight);
+    void setVirtualWall(bool dVirtualWall);
+    void setOvercurrents(unsigned char dOvercurrents);
+    void setDirtDetectorLeft(unsigned char dDirtDetectorLeft);
+    void setDirtDetectorRight(unsigned char dDirtDetectorRight);
+    void setIRByte(unsigned char dIRByte);
+    void setButtons(unsigned char dButtons);
+    void setDistance(short dDistance);
+    void setAngle(short dAngle);
     void setChargingState(unsigned char dChargingState);
     void setVoltage(unsigned short dVoltage);
     void setCurrent(short dCurrent);

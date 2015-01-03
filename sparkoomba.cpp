@@ -387,6 +387,66 @@ int Sparkoomba::handleCallbacks()
 
     #ifdef ALLOWSENSOROVERRIDE
     #warning "Sensor Override Allowed!"
+//oid Sparkoomba::
+    void Sparkoomba::setBumpsWheelDrops(unsigned char dBumbsWheelDrops)
+    {
+        this->currSensorData[0] = dBumbsWheelDrops;
+    }
+    void Sparkoomba::setWall(bool dWall)
+    {
+        this->currSensorData[1] = dWall;
+    }
+    void Sparkoomba::setCliffLeft(bool dCliffLeft)
+    {
+        this->currSensorData[2] = dCliffLeft;
+    }
+    void Sparkoomba::setCliffFrontLeft(bool dCliffFrontLeft)
+    {
+        this->currSensorData[3] = dCliffFrontLeft;
+    }
+    void Sparkoomba::setCliffFrontRight(bool dCliffFrontRight)
+    {
+        this->currSensorData[4] = dCliffFrontRight;
+    }
+    void Sparkoomba::setCliffRight(bool dCliffRight)
+    {
+        this->currSensorData[5] = dCliffRight;
+    }
+    void Sparkoomba::setVirtualWall(bool dVirtualWall)
+    {
+        this->currSensorData[6] = dVirtualWall;
+    }
+    void Sparkoomba::setOvercurrents(unsigned char dOvercurrents)
+    {
+        this->currSensorData[7] = dOvercurrents;
+    }
+    void Sparkoomba::setDirtDetectorLeft(unsigned char dDirtDetectorLeft)
+    {
+        this->currSensorData[8] = dDirtDetectorLeft;
+    }
+    void Sparkoomba::setDirtDetectorRight(unsigned char dDirtDetectorRight)
+    {
+        this->currSensorData[9] = dDirtDetectorRight;
+    }
+    void Sparkoomba::setIRByte(unsigned char dIRByte)
+    {
+        this->currSensorData[10] = dIRByte;
+    }
+    void Sparkoomba::setButtons(unsigned char dButtons)
+    {
+        this->currSensorData[11] = dButtons;
+    }
+    void Sparkoomba::setDistance(short dDistance)
+    {
+        this->currSensorData[12] = dDistance>>8;
+        this->currSensorData[13] = dDistance;
+    }
+    void Sparkoomba::setAngle(short dAngle)
+    {
+        this->currSensorData[14] = dAngle>>8;
+        this->currSensorData[15] = dAngle;
+    }
+    
     void Sparkoomba::setChargingState(unsigned char dChargingState){
         this->currSensorData[16] = dChargingState;
     }

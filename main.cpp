@@ -7,13 +7,41 @@
 
 #include <stdio.h>
 #include "sparkoomba.h"
+#include "Serial.h"
+
 using namespace std;
 
 Sparkoomba SR1;
+CSerial serial;
+char* lpBuffer = new char[500];
+
 /*
  * 
  */
 int main(int argc, char** argv) {
+    // Connect the serial object
+    if (serial.Open(4, 9600))
+    {
+        printf("Serial port opened successfully!");
+        
+        while(serial.ReadDataWaiting() == 0)
+        {}
+        Sleep(1000);
+        while(serial.ReadDataWaiting())
+        {
+            int nBytesRead = serial.ReadData(lpBuffer, 500);
+
+            printf("Data: [%d]",nBytesRead);
+            printf(lpBuffer);
+            printf("\n");
+        }
+        
+        
+        serial.Close();
+    }
+    else
+        printf("Unable to open serial port!");
+    
     printf("Hello World!\n");
     SR1.updateSensors();
     

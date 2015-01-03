@@ -15,6 +15,8 @@ extern "C" {
 }
 #endif
 
+#include "string.h"
+
 #define bumpright (sensorbytes[0] & 0x01)
 #define bumpleft  (sensorbytes[0] & 0x02)
 
@@ -63,6 +65,7 @@ public:
     char getBatteryTemp();
     unsigned short getBatteryCharge();
     unsigned short getBatteryCapacity();
+    
     int registerCallback(unsigned char sensorType, int (*cbFunc)(void));
     int handleCallbacks();
    
@@ -79,9 +82,17 @@ public:
 private:
     int ddPin;
     int baud;
-    unsigned char sensorbytes[26];
-    unsigned char tempSensorBuffer[26];
-    int (*cbFunc[26])();  // A function pointer to callback functions
+    unsigned char currSensorData[26];
+    unsigned char prevSensorData[26];
+    int (*cbFunc[18])();  // A function pointer to callback functions
+    
+    // Sensor Stuff
+    unsigned char getChargingState(bool oldData);
+    unsigned short getVoltage(bool oldData);
+    short getCurrent(bool oldData);
+    char getBatteryTemp(bool oldData);
+    unsigned short getBatteryCharge(bool oldData);
+    unsigned short getBatteryCapacity(bool oldData);
 };
 
 

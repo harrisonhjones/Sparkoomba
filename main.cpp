@@ -22,9 +22,9 @@ char* lpBuffer = new char[500];
  * 
  */
 
-int multiply()
+int batteryTempCallback()
 {
-    printf("3 * 3 = 9!\n");
+    printf("The battery temp changed!\n");
     return 1;
 }
 
@@ -70,6 +70,8 @@ int main(int argc, char** argv) {
     else
         printf("Callback failure!\n");*/
     
+    SR1.registerCallback(BATTERY_TEMP,batteryTempCallback);
+    
     SR1.setChargingState(4);
     SR1.setVoltage(17531);
     SR1.setCurrent(-55);
@@ -84,6 +86,11 @@ int main(int argc, char** argv) {
     printf("Battery Charge: 0x%x (%d) mAh\n", SR1.getBatteryCharge(), SR1.getBatteryCharge());
     printf("Battery Capacity: 0x%x (%d) mAh\n", SR1.getBatteryCapacity(), SR1.getBatteryCapacity());
     
+    if(SR1.handleCallbacks() == 0)
+        printf("Callback success!\n");
+    else
+        printf("Callback failure!\n");
+            
 #ifdef RUN_UNIT_TESTS
     printf("Running unit test for setChargingState(i)\n");
     for(int i=0;i<6;i++)

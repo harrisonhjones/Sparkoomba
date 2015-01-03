@@ -53,33 +53,37 @@ void Sparkoomba::stop()
 }
 void Sparkoomba::updateSensors()
 {
+    // 1. Loads current sensor data into prevSensorData
+    memcpy(this->prevSensorData,this->currSensorData,26);
+    
+    // 2. Updates current sensor data
     // Populate the sensors with arbitrary data
-    this->sensorbytes[0] = 0x00;    // 0    Bumps and Wheel Drops
-    this->sensorbytes[1] = 0x00;    //1    Wall
-    this->sensorbytes[2] = 0x00;    //2    Cliff Left
-    this->sensorbytes[3] = 0x00;    //3    Cliff Front Left
-    this->sensorbytes[4] = 0x00;    //4    Cliff Front Right
-    this->sensorbytes[5] = 0x00;    //5    Cliff Right
-    this->sensorbytes[6] = 0x00;    //6    Virtual Wall
-    this->sensorbytes[7] = 0x00;    //7    Overcurrents
-    this->sensorbytes[8] = 0x00;    //8    Unused
-    this->sensorbytes[9] = 0x00;    //9    Unused
-    this->sensorbytes[10] = 0x00;   //10   IR Byte
-    this->sensorbytes[11] = 0x00;   //11   Buttons
-    this->sensorbytes[12] = 0x00;   //12   Distance MSB
-    this->sensorbytes[13] = 0x00;   //13   Distance LSB
-    this->sensorbytes[14] = 0x00;   //14    Angle MSB
-    this->sensorbytes[15] = 0x00;   //15   Angle LSB
-    this->sensorbytes[16] = 0x01;   //16   Charging State
-    this->sensorbytes[17] = 0x3B;   //17   Voltage MSB  (15.2V)
-    this->sensorbytes[18] = 0x60;   //18   Voltage LSB
-    this->sensorbytes[19] = 0xFF;   //19   Current MSB  (-200 mA - discharging)
-    this->sensorbytes[20] = 0x38;   //20   Current LSB
-    this->sensorbytes[21] = 0x1D;   //21   Battery Temp (29 degrees C)
-    this->sensorbytes[22] = 0x09;   //22   Battery Charge MSB   (2,500 mAh)
-    this->sensorbytes[23] = 0xC4;   //23   Battery Charge LSB
-    this->sensorbytes[24] = 0x0B;   //24   Battery Capacity MSB (3,000 mAh)
-    this->sensorbytes[25] = 0xB8;   // 25   Battery Capacity LSB
+    this->currSensorData[0] = 0x00;    // 0    Bumps and Wheel Drops
+    this->currSensorData[1] = 0x00;    //1    Wall
+    this->currSensorData[2] = 0x00;    //2    Cliff Left
+    this->currSensorData[3] = 0x00;    //3    Cliff Front Left
+    this->currSensorData[4] = 0x00;    //4    Cliff Front Right
+    this->currSensorData[5] = 0x00;    //5    Cliff Right
+    this->currSensorData[6] = 0x00;    //6    Virtual Wall
+    this->currSensorData[7] = 0x00;    //7    Overcurrents
+    this->currSensorData[8] = 0x00;    //8    Unused
+    this->currSensorData[9] = 0x00;    //9    Unused
+    this->currSensorData[10] = 0x00;   //10   IR Byte
+    this->currSensorData[11] = 0x00;   //11   Buttons
+    this->currSensorData[12] = 0x00;   //12   Distance MSB
+    this->currSensorData[13] = 0x00;   //13   Distance LSB
+    this->currSensorData[14] = 0x00;   //14    Angle MSB
+    this->currSensorData[15] = 0x00;   //15   Angle LSB
+    this->currSensorData[16] = 0x01;   //16   Charging State
+    this->currSensorData[17] = 0x3B;   //17   Voltage MSB  (15.2V)
+    this->currSensorData[18] = 0x60;   //18   Voltage LSB
+    this->currSensorData[19] = 0xFF;   //19   Current MSB  (-200 mA - discharging)
+    this->currSensorData[20] = 0x38;   //20   Current LSB
+    this->currSensorData[21] = 0x1D;   //21   Battery Temp (29 degrees C)
+    this->currSensorData[22] = 0x09;   //22   Battery Charge MSB   (2,500 mAh)
+    this->currSensorData[23] = 0xC4;   //23   Battery Charge LSB
+    this->currSensorData[24] = 0x0B;   //24   Battery Capacity MSB (3,000 mAh)
+    this->currSensorData[25] = 0xB8;   // 25   Battery Capacity LSB
 }
 
 void Sparkoomba::playSong()
@@ -110,28 +114,69 @@ void Sparkoomba::gainControl()
 // Sensor Stuff
 unsigned char Sparkoomba::getChargingState()
 {
-    return this->sensorbytes[16];
+    return this->getChargingState(false);
 }
-
+unsigned char Sparkoomba::getChargingState(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[16];
+    else
+        return this->currSensorData[16];
+}
 unsigned short Sparkoomba::getVoltage()
 {
-    return (this->sensorbytes[17]<<8) + this->sensorbytes[18];
+    return this->getVoltage(false);
+}
+unsigned short Sparkoomba::getVoltage(bool oldData)
+{
+    if(oldData)
+        return (this->prevSensorData[17]<<8) + this->prevSensorData[18];
+    else
+        return (this->currSensorData[17]<<8) + this->currSensorData[18];
 }
 short Sparkoomba::getCurrent()
 {
-    return (this->sensorbytes[19]<<8) + this->sensorbytes[20];
+    return this->getCurrent(false);
+}
+short Sparkoomba::getCurrent(bool oldData)
+{
+    if(oldData)
+        return (this->prevSensorData[19]<<8) + this->prevSensorData[20];
+    else
+        return (this->currSensorData[19]<<8) + this->currSensorData[20];
 }
 char Sparkoomba::getBatteryTemp()
 {
-    return this->sensorbytes[21];
+    return this->getBatteryTemp(false);
+}
+char Sparkoomba::getBatteryTemp(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[21];
+    else
+        return this->currSensorData[21];
 }
 unsigned short Sparkoomba::getBatteryCharge()
 {
-    return (this->sensorbytes[22]<<8) + this->sensorbytes[23];
+    return this->getBatteryCharge(false);
+}
+unsigned short Sparkoomba::getBatteryCharge(bool oldData)
+{
+    if(oldData)
+        return (this->prevSensorData[22]<<8) + this->prevSensorData[23];
+    else
+        return (this->currSensorData[22]<<8) + this->currSensorData[23];
 }
 unsigned short Sparkoomba::getBatteryCapacity()
 {
-    return (this->sensorbytes[24]<<8) + this->sensorbytes[25];
+    return this->getBatteryCapacity(false);
+}
+unsigned short Sparkoomba::getBatteryCapacity(bool oldData)
+{
+    if(oldData)
+        return (this->prevSensorData[24]<<8) + this->prevSensorData[25];
+    else
+        return (this->currSensorData[24]<<8) + this->currSensorData[25];
 }
 
 int Sparkoomba::registerCallback(unsigned char sensorType, int (*cbFunc)(void))
@@ -151,20 +196,27 @@ int Sparkoomba::registerCallback(unsigned char sensorType, int (*cbFunc)(void))
 int Sparkoomba::handleCallbacks()
 {
     int errors = 0;
-    for(int i = 0; i<26; i++)
+    for(int i = 0; i<18; i++)
     {
-        if (this->cbFunc[i] == 0)
+        if(this->currSensorData[i]!=this->prevSensorData[i])
         {
-            printf("No callback registered for sensor #%d\n",i);
+            if (this->cbFunc[i] == 0)
+            {
+                printf("No callback registered for sensor #%d\n",i);
+            }
+            else
+            {
+                int result = (this->cbFunc[i]());
+                if(result != 1)
+                {
+                    printf("Callback registered for sensor #%d failed with result: %d\n",i, result);
+                    errors++;
+                }
+            }
         }
         else
         {
-            int result = (this->cbFunc[i]());
-            if(result != 1)
-            {
-                printf("Callback registered for sensor #%d failed with result: %d\n",i, result);
-                errors++;
-            }
+            printf("No change in sensor #%d\n",i);
         }
     }
     return errors;
@@ -173,25 +225,25 @@ int Sparkoomba::handleCallbacks()
     #ifdef ALLOWSENSOROVERRIDE
     #warning "Sensor Override Allowed!"
     void Sparkoomba::setChargingState(unsigned char dChargingState){
-        this->sensorbytes[16] = dChargingState;
+        this->currSensorData[16] = dChargingState;
     }
     void Sparkoomba::setVoltage(unsigned short dVoltage){
-        this->sensorbytes[17] = dVoltage>>8;
-        this->sensorbytes[18] = dVoltage;
+        this->currSensorData[17] = dVoltage>>8;
+        this->currSensorData[18] = dVoltage;
     }
     void Sparkoomba::setCurrent(short dCurrent){
-        this->sensorbytes[19] = dCurrent>>8;
-        this->sensorbytes[20] = dCurrent;
+        this->currSensorData[19] = dCurrent>>8;
+        this->currSensorData[20] = dCurrent;
     }
     void Sparkoomba::setBatteryTemp(char dBatteryTemp){
-        this->sensorbytes[21] = dBatteryTemp;
+        this->currSensorData[21] = dBatteryTemp;
     }
     void Sparkoomba::setBatteryCharge(unsigned short dBatteryCharge){
-        this->sensorbytes[22] = dBatteryCharge>>8;
-        this->sensorbytes[23] = dBatteryCharge;
+        this->currSensorData[22] = dBatteryCharge>>8;
+        this->currSensorData[23] = dBatteryCharge;
     }
     void Sparkoomba::setBatteryCapacity(unsigned short dBatteryCapacity){
-        this->sensorbytes[24] = dBatteryCapacity>>8;
-        this->sensorbytes[25] = dBatteryCapacity;
+        this->currSensorData[24] = dBatteryCapacity>>8;
+        this->currSensorData[25] = dBatteryCapacity;
     }
     #endif

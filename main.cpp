@@ -142,8 +142,162 @@ int main(int argc, char** argv) {
 #ifdef RUN_UNIT_TEST_SETTER
     unitTestFailures = 0;
     printf("===== Running Unit Tests for Setters =====\n");
+    printf("Running unit test for setBumpsWheelDrops(i)\n");
+    for(int i=0;i<=31;i++)
+    {
+        SR1.setBumpsWheelDrops(i);
+        if(SR1.getBumpsWheelDrops() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setWall(i)\n");
+    for(int i=0;i<=1;i++)
+    {
+        SR1.setWall(i);
+        if(SR1.getWall() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setCliffLeft(i)\n");
+    for(int i=0;i<=1;i++)
+    {
+        SR1.setCliffLeft(i);
+        if(SR1.getCliffLeft() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setCliffFrontLeft(i)\n");
+    for(int i=0;i<=1;i++)
+    {
+        SR1.setCliffFrontLeft(i);
+        if(SR1.getCliffFrontLeft() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setCliffFrontRight(i)\n");
+    for(int i=0;i<=1;i++)
+    {
+        SR1.setCliffFrontRight(i);
+        if(SR1.getCliffFrontRight() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setCliffRight(i)\n");
+    for(int i=0;i<=1;i++)
+    {
+        SR1.setCliffRight(i);
+        if(SR1.getCliffRight() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setVirtualWall(i)\n");
+    for(int i=0;i<=1;i++)
+    {
+        SR1.setVirtualWall(i);
+        if(SR1.getVirtualWall() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setOvercurrents(i)\n");
+    for(int i=0;i<=31;i++)
+    {
+        SR1.setOvercurrents(i);
+        if(SR1.getOvercurrents() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setDirtDetectorLeft(i)\n");
+    for(int i=0;i<=255;i++)
+    {
+        SR1.setDirtDetectorLeft(i);
+        if(SR1.getDirtDetectorLeft() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setDirtDetectorRight(i)\n");
+    for(int i=0;i<=255;i++)
+    {
+        SR1.setDirtDetectorRight(i);
+        if(SR1.getDirtDetectorRight() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setIRByte(i)\n");
+    for(int i=0;i<=255;i++)
+    {
+        SR1.setIRByte(i);
+        if(SR1.getIRByte() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setButtons(i)\n");
+    for(int i=0;i<=15;i++)
+    {
+        SR1.setButtons(i);
+        if(SR1.getButtons() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setDistance(i)\n");
+    for(int i=-32768;i<=32767;i++)
+    {
+        SR1.setDistance(i);
+        if(SR1.getDistance() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
+    printf("Running unit test for setAngle(i)\n");
+    for(int i=-32768;i<=32767;i++)
+    {
+        SR1.setAngle(i);
+        if(SR1.getAngle() != i)
+        {
+            unitTestFailures++;
+            printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
+            break;
+        }
+    }
     printf("Running unit test for setChargingState(i)\n");
-    for(int i=0;i<6;i++)
+    for(int i=0;i<=5;i++)
     {
         SR1.setChargingState(i);
         if(SR1.getChargingState() != i)
@@ -154,7 +308,7 @@ int main(int argc, char** argv) {
         }
     }
     printf("Running unit test for setVoltage(i)\n");
-    for(int i=0;i<65535;i++)
+    for(int i=0;i<=65535;i++)
     {
         SR1.setVoltage(i);
         if(SR1.getVoltage() != i)
@@ -165,7 +319,7 @@ int main(int argc, char** argv) {
         }
     }
     printf("Running unit test for setCurrent(i)\n");
-    for(int i=-32768;i<32767;i++)
+    for(int i=-32768;i<=32767;i++)
     {
         SR1.setCurrent(i);
         if(SR1.getCurrent() != i)
@@ -176,7 +330,7 @@ int main(int argc, char** argv) {
         }
     }
     printf("Running unit test for setBatteryTemp(i)\n");
-    for(int i=-128;i<127;i++)
+    for(int i=-128;i<=127;i++)
     {
         SR1.setBatteryTemp(i);
         if(SR1.getBatteryTemp() != i)
@@ -187,7 +341,7 @@ int main(int argc, char** argv) {
         }
     }
     printf("Running unit test for setBatteryCharge(i)\n");
-    for(int i=0;i<65535;i++)
+    for(int i=0;i<=65535;i++)
     {
         SR1.setBatteryCharge(i);
         if(SR1.getBatteryCharge() != i)
@@ -198,7 +352,7 @@ int main(int argc, char** argv) {
         }
     }
     printf("Running unit test for setBatteryCapacity(i)\n");
-    for(int i=0;i<65535;i++)
+    for(int i=0;i<=65535;i++)
     {
         SR1.setBatteryCapacity(i);
         if(SR1.getBatteryCapacity() != i)

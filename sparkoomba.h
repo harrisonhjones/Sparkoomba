@@ -20,6 +20,33 @@ extern "C" {
 #define bumpright (sensorbytes[0] & 0x01)
 #define bumpleft  (sensorbytes[0] & 0x02)
 
+// Roomba SCI Op Codes
+#define CMD_START 128
+#define CMD_BAUD 129
+#define CMD_CONTROL 130
+#define CMD_SAFE 131
+#define CMD_FULL 132
+#define CMD_POWER 133
+#define CMD_SPOT 134
+#define CMD_CLEAN 135
+#define CMD_MAX 136
+#define CMD_DRIVE 137
+#define CMD_MOTORS 138
+#define CMD_LEDS 139
+#define CMD_SONG 140
+#define CMD_PLAY 141
+#define CMD_SENSORS 142
+#define CMD_FORCE_SEEK_DOCK 143
+
+
+
+// Roomba SCI States
+#define OFF 0
+#define PASSIVE 1
+#define SAFE 2
+#define FULL 3
+
+// Sensor IDs
 #define BUMPS_AND_WHEEL_DROPS 0
 #define WALL 1
 #define CLIFF_LEFT 2
@@ -82,11 +109,18 @@ public:
     #endif
     
 private:
-    int ddPin;
-    int baud;
+    // Physical Roomba Connection Variables
+    int ddPin = 0;
+    int baud = 19200;
+    
+    // Roomba Sensor Variables
     unsigned char currSensorData[26];
     unsigned char prevSensorData[26];
     int (*cbFunc[18])();  // A function pointer to callback functions
+    
+    // Roomba State Variables
+    bool forceStateChange = false;
+    char roombaState = 0;
     
     // Callback stuff
     int handleCallback(int sensorNum);

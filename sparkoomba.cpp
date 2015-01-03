@@ -200,6 +200,28 @@ unsigned char Sparkoomba::getOvercurrents(bool oldData)
     else
         return this->currSensorData[7];
 }
+unsigned char Sparkoomba::getDirtDetectorLeft()
+{
+    return this->getDirtDetectorLeft(false);
+}
+unsigned char Sparkoomba::getDirtDetectorLeft(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[8];
+    else
+        return this->currSensorData[8];
+}
+unsigned char Sparkoomba::getDirtDetectorRight()
+{
+    return this->getDirtDetectorRight(false);
+}
+unsigned char Sparkoomba::getDirtDetectorRight(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[9];
+    else
+        return this->currSensorData[9];
+}
 unsigned char Sparkoomba::getIRByte()
 {
     return this->getIRByte(false);

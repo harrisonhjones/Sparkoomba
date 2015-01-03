@@ -94,6 +94,8 @@ public:
     bool getCliffRight();
     bool getVirtualWall();
     unsigned char getOvercurrents();
+    unsigned char getDirtDetectorLeft();
+    unsigned char getDirtDetectorRight();
     unsigned char getIRByte();
     unsigned char getButtons();
     short getDistance();
@@ -145,6 +147,8 @@ private:
     bool getCliffRight(bool oldData);
     bool getVirtualWall(bool oldData);
     unsigned char getOvercurrents(bool oldData);
+    unsigned char getDirtDetectorLeft(bool oldData);
+    unsigned char getDirtDetectorRight(bool oldData);
     unsigned char getIRByte(bool oldData);
     unsigned char getButtons(bool oldData);
     short getDistance(bool oldData);

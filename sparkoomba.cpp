@@ -108,12 +108,12 @@ void Sparkoomba::gainControl()
 }
 
 // Sensor Stuff
-int Sparkoomba::getChargingState()
+unsigned char Sparkoomba::getChargingState()
 {
     return this->sensorbytes[16];
 }
 
-short Sparkoomba::getVoltage()
+unsigned short Sparkoomba::getVoltage()
 {
     return (this->sensorbytes[17]<<8) + this->sensorbytes[18];
 }
@@ -121,15 +121,15 @@ short Sparkoomba::getCurrent()
 {
     return (this->sensorbytes[19]<<8) + this->sensorbytes[20];
 }
-int Sparkoomba::getBatteryTemp()
+char Sparkoomba::getBatteryTemp()
 {
     return this->sensorbytes[21];
 }
-short Sparkoomba::getBatteryCharge()
+unsigned short Sparkoomba::getBatteryCharge()
 {
     return (this->sensorbytes[22]<<8) + this->sensorbytes[23];
 }
-short Sparkoomba::getBatteryCapacity()
+unsigned short Sparkoomba::getBatteryCapacity()
 {
     return (this->sensorbytes[24]<<8) + this->sensorbytes[25];
 }
@@ -169,3 +169,29 @@ int Sparkoomba::handleCallbacks()
     }
     return errors;
 }
+
+    #ifdef ALLOWSENSOROVERRIDE
+    #warning "Sensor Override Allowed!"
+    void Sparkoomba::setChargingState(unsigned char dChargingState){
+        this->sensorbytes[16] = dChargingState;
+    }
+    void Sparkoomba::setVoltage(unsigned short dVoltage){
+        this->sensorbytes[17] = dVoltage>>8;
+        this->sensorbytes[18] = dVoltage;
+    }
+    void Sparkoomba::setCurrent(short dCurrent){
+        this->sensorbytes[19] = dCurrent>>8;
+        this->sensorbytes[20] = dCurrent;
+    }
+    void Sparkoomba::setBatteryTemp(char dBatteryTemp){
+        this->sensorbytes[21] = dBatteryTemp;
+    }
+    void Sparkoomba::setBatteryCharge(unsigned short dBatteryCharge){
+        this->sensorbytes[22] = dBatteryCharge>>8;
+        this->sensorbytes[23] = dBatteryCharge;
+    }
+    void Sparkoomba::setBatteryCapacity(unsigned short dBatteryCapacity){
+        this->sensorbytes[24] = dBatteryCapacity>>8;
+        this->sensorbytes[25] = dBatteryCapacity;
+    }
+    #endif

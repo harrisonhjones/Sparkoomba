@@ -37,6 +37,7 @@ extern "C" {
 #define BATTERY_CHARGE 16
 #define BATTERY_CAPACITY 17
 
+#define ALLOWSENSOROVERRIDE
 class Sparkoomba
 {
 public:
@@ -56,19 +57,30 @@ public:
     void gainControl();
     
     // Sensor Stuff
-    int getChargingState();
-    short getVoltage();
+    unsigned char getChargingState();
+    unsigned short getVoltage();
     short getCurrent();
-    int getBatteryTemp();
-    short getBatteryCharge();
-    short getBatteryCapacity();
+    char getBatteryTemp();
+    unsigned short getBatteryCharge();
+    unsigned short getBatteryCapacity();
     int registerCallback(unsigned char sensorType, int (*cbFunc)(void));
     int handleCallbacks();
+   
+    // Sensor Overrides
+    #ifdef ALLOWSENSOROVERRIDE
+    void setChargingState(unsigned char dChargingState);
+    void setVoltage(unsigned short dVoltage);
+    void setCurrent(short dCurrent);
+    void setBatteryTemp(char dBatteryTemp);
+    void setBatteryCharge(unsigned short dBatteryCharge);
+    void setBatteryCapacity(unsigned short dBatteryCapacity);
+    #endif
     
 private:
     int ddPin;
     int baud;
     unsigned char sensorbytes[26];
+    unsigned char tempSensorBuffer[26];
     int (*cbFunc[26])();  // A function pointer to callback functions
 };
 

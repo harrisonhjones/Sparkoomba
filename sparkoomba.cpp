@@ -112,6 +112,138 @@ void Sparkoomba::gainControl()
 }
 
 // Sensor Stuff
+unsigned char Sparkoomba::getBumpsWheelDrops()
+{
+    return this->getBumpsWheelDrops(false);
+}
+unsigned char Sparkoomba::getBumpsWheelDrops(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[0];
+    else
+        return this->currSensorData[0];
+}
+bool Sparkoomba::getWall()
+{
+    return this->getWall(false);
+}
+bool Sparkoomba::getWall(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[1];
+    else
+        return this->currSensorData[1];
+}
+bool Sparkoomba::getCliffLeft()
+{
+    return this->getCliffLeft(false);
+}
+bool Sparkoomba::getCliffLeft(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[2];
+    else
+        return this->currSensorData[2];
+}
+bool Sparkoomba::getCliffFrontLeft()
+{
+    return this->getCliffFrontLeft(false);
+}
+bool Sparkoomba::getCliffFrontLeft(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[3];
+    else
+        return this->currSensorData[3];
+}
+bool Sparkoomba::getCliffFrontRight()
+{
+    return this->getCliffFrontRight(false);
+}
+bool Sparkoomba::getCliffFrontRight(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[4];
+    else
+        return this->currSensorData[4];
+}
+bool Sparkoomba::getCliffRight()
+{
+    return this->getCliffRight(false);
+}
+bool Sparkoomba::getCliffRight(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[5];
+    else
+        return this->currSensorData[5];
+}
+bool Sparkoomba::getVirtualWall()
+{
+    return this->getVirtualWall(false);
+}
+bool Sparkoomba::getVirtualWall(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[6];
+    else
+        return this->currSensorData[6];
+}
+unsigned char Sparkoomba::getOvercurrents()
+{
+    return this->getOvercurrents(false);
+}
+unsigned char Sparkoomba::getOvercurrents(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[7];
+    else
+        return this->currSensorData[7];
+}
+unsigned char Sparkoomba::getIRByte()
+{
+    return this->getIRByte(false);
+}
+unsigned char Sparkoomba::getIRByte(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[10];
+    else
+        return this->currSensorData[10];
+}
+unsigned char Sparkoomba::getButtons()
+{
+    return this->getButtons(false);
+}
+unsigned char Sparkoomba::getButtons(bool oldData)
+{
+    if(oldData)
+        return this->prevSensorData[11];
+    else
+        return this->currSensorData[11];
+}
+short Sparkoomba::getDistance()
+{
+    return this->getDistance(false);
+}
+short Sparkoomba::getDistance(bool oldData)
+{
+    if(oldData)
+        return (this->prevSensorData[12]<<8) + this->prevSensorData[13];
+    else
+        return (this->currSensorData[12]<<8) + this->currSensorData[13];
+}
+short Sparkoomba::getAngle()
+{
+    return this->getAngle(false);
+}
+short Sparkoomba::getAngle(bool oldData)
+{
+    if(oldData)
+        return (this->prevSensorData[14]<<8) + this->prevSensorData[15];
+    else
+        return (this->currSensorData[14]<<8) + this->currSensorData[15];
+}
 unsigned char Sparkoomba::getChargingState()
 {
     return this->getChargingState(false);

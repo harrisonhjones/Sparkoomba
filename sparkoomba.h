@@ -38,8 +38,6 @@ extern "C" {
 #define CMD_SENSORS 142
 #define CMD_FORCE_SEEK_DOCK 143
 
-
-
 // Roomba SCI States
 #define OFF 0
 #define PASSIVE 1
@@ -87,7 +85,20 @@ public:
     void clean();
     void gainControl();
     
-    // Sensor Stuff
+    // Sensor Getters
+    unsigned char getBumpsWheelDrops();
+    bool getWall();
+    bool getCliffLeft();
+    bool getCliffFrontLeft();
+    bool getCliffFrontRight();
+    bool getCliffRight();
+    bool getVirtualWall();
+    unsigned char getOvercurrents();
+    unsigned char getIRByte();
+    unsigned char getButtons();
+    short getDistance();
+    short getAngle();
+    
     unsigned char getChargingState();
     unsigned short getVoltage();
     short getCurrent();
@@ -98,7 +109,7 @@ public:
     int registerCallback(unsigned char sensorType, int (*cbFunc)(void));
     int handleCallbacks();
    
-    // Sensor Overrides
+    // Sensor Setters
     #ifdef ALLOWSENSOROVERRIDE
     void setChargingState(unsigned char dChargingState);
     void setVoltage(unsigned short dVoltage);
@@ -126,6 +137,18 @@ private:
     int handleCallback(int sensorNum);
     
     // Sensor Stuff
+    unsigned char getBumpsWheelDrops(bool oldData);
+    bool getWall(bool oldData);
+    bool getCliffLeft(bool oldData);
+    bool getCliffFrontLeft(bool oldData);
+    bool getCliffFrontRight(bool oldData);
+    bool getCliffRight(bool oldData);
+    bool getVirtualWall(bool oldData);
+    unsigned char getOvercurrents(bool oldData);
+    unsigned char getIRByte(bool oldData);
+    unsigned char getButtons(bool oldData);
+    short getDistance(bool oldData);
+    short getAngle(bool oldData);
     unsigned char getChargingState(bool oldData);
     unsigned short getVoltage(bool oldData);
     short getCurrent(bool oldData);

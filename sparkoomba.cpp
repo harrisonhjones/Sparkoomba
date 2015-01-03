@@ -183,13 +183,13 @@ int Sparkoomba::registerCallback(unsigned char sensorType, int (*cbFunc)(void))
 {
     if(sensorType > 25)
     {
-        printf("Invalid sensor type");
+        //printf("Invalid sensor type");
         return -1;
     }
     else
     {
         this->cbFunc[sensorType] = cbFunc;
-        printf("Callback function of sensor (%d) registered (%d = %d?)", sensorType, (int) this->cbFunc[sensorType], (int) cbFunc);
+        //printf("Callback function of sensor (%d) registered (%d = %d?)", sensorType, (int) this->cbFunc[sensorType], (int) cbFunc);
     }
 }
 
@@ -197,14 +197,14 @@ int Sparkoomba::handleCallback(int sensorNum)
 {
     if (this->cbFunc[sensorNum] == 0)
     {
-        printf("No callback registered for sensor #%d\n",sensorNum);
+        //printf("No callback registered for sensor #%d\n",sensorNum);
     }
     else
     {
         int result = (this->cbFunc[sensorNum]());
         if(result != 1)
         {
-            printf("Callback registered for sensor #%d failed with result: %d\n",sensorNum, result);
+            //printf("Callback registered for sensor #%d failed with result: %d\n",sensorNum, result);
             return 1;
         }
     }
@@ -227,7 +227,7 @@ int Sparkoomba::handleCallbacks()
         errors += this->handleCallback(BATTERY_CHARGE);
     if(getBatteryCapacity(true) != getBatteryCapacity(false))
         errors += this->handleCallback(BATTERY_CAPACITY);
-    
+    //printf("Num errors: %d\n",errors);
     return errors;
 }
 

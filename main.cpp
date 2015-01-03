@@ -11,6 +11,8 @@
 #include "Serial.h"
 
 #define RUN_UNIT_TESTS
+#define RUN_UNIT_TEST_SETTER
+#define RUN_UNIT_TEST_CALLBACK
 
 using namespace std;
 
@@ -131,14 +133,22 @@ int main(int argc, char** argv) {
         printf("Callback success!\n");
     else
         printf("Callback failure. Failure num: %d!\n", callbackErrors);
-            
-#ifdef RUN_UNIT_TESTS
+
+#ifdef RUN_UNIT_TESTS 
+    printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    printf("===== Running Unit Tests =====\n\n");
+    int unitTestFailuresTotal = 0;
+    int unitTestFailures = 0;
+#ifdef RUN_UNIT_TEST_SETTER
+    unitTestFailures = 0;
+    printf("===== Running Unit Tests for Setters =====\n");
     printf("Running unit test for setChargingState(i)\n");
     for(int i=0;i<6;i++)
     {
         SR1.setChargingState(i);
         if(SR1.getChargingState() != i)
         {
+            unitTestFailures++;
             printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
             break;
         }
@@ -149,6 +159,7 @@ int main(int argc, char** argv) {
         SR1.setVoltage(i);
         if(SR1.getVoltage() != i)
         {
+            unitTestFailures++;
             printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
             break;
         }
@@ -159,6 +170,7 @@ int main(int argc, char** argv) {
         SR1.setCurrent(i);
         if(SR1.getCurrent() != i)
         {
+            unitTestFailures++;
             printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
             break;
         }
@@ -169,6 +181,7 @@ int main(int argc, char** argv) {
         SR1.setBatteryTemp(i);
         if(SR1.getBatteryTemp() != i)
         {
+            unitTestFailures++;
             printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
             break;
         }
@@ -179,6 +192,7 @@ int main(int argc, char** argv) {
         SR1.setBatteryCharge(i);
         if(SR1.getBatteryCharge() != i)
         {
+            unitTestFailures++;
             printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
             break;
         }
@@ -189,10 +203,37 @@ int main(int argc, char** argv) {
         SR1.setBatteryCapacity(i);
         if(SR1.getBatteryCapacity() != i)
         {
+            unitTestFailures++;
             printf("\t[FAILURE] Unit test failed @ i = %d\n\n",i);
             break;
         }
     }
+    printf("SETTER UNIT TEST FAILURES: %d\n\n",unitTestFailures);
+    unitTestFailuresTotal += unitTestFailures;
+#endif   
+#ifdef RUN_UNIT_TEST_CALLBACK
+    unitTestFailures = 0;
+    printf("===== Running Unit Tests for Callbacks =====\n");
+    printf("Running unit test for CHARGING_STATE Callback\n");
+    SR1.registerCallback(CHARGING_STATE,chargingStateCallback);
+    SR1.registerCallback(VOLTAGE,NO_CALLBACK);
+    SR1.registerCallback(CURRENT,NO_CALLBACK);
+    SR1.registerCallback(BATTERY_TEMP,NO_CALLBACK);
+    SR1.registerCallback(BATTERY_CHARGE,NO_CALLBACK);
+    SR1.registerCallback(BATTERY_CAPACITY,NO_CALLBACK);
+    SR1.setChargingState(4);
+    callbackErrors = SR1.handleCallbacks();
+    if(callbackErrors != 1)
+    {
+        unitTestFailures++;
+        printf("\t[FAILURE] Unit test failed\n");
+    }
+    printf("CALLBACK UNIT TEST FAILURES: %d\n\n",unitTestFailures);
+    unitTestFailuresTotal += unitTestFailures;
+#endif 
+    printf("TOTAL UNIT TEST FAILURES: %d\n\n",unitTestFailuresTotal);
+    printf("===== End Unit Tests =====\n");
+    printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 #endif
     return 0;
 }

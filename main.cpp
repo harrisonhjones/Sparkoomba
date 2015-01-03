@@ -18,9 +18,17 @@ char* lpBuffer = new char[500];
 /*
  * 
  */
+
+int multiply()
+{
+    printf("3 * 3 = 9!\n");
+    return 1;
+}
+
+
 int main(int argc, char** argv) {
     // Connect the serial object
-    if (serial.Open(4, 9600))
+    /*if (serial.Open(4, 9600))
     {
         printf("Serial port opened successfully!");
         
@@ -40,7 +48,7 @@ int main(int argc, char** argv) {
         serial.Close();
     }
     else
-        printf("Unable to open serial port!");
+        printf("Unable to open serial port!");*/
     
     printf("Hello World!\n");
     SR1.updateSensors();
@@ -53,6 +61,11 @@ int main(int argc, char** argv) {
     printf("Battery Charge: 0x%x (%d) mAh\n", SR1.getBatteryCharge(), SR1.getBatteryCharge());
     printf("Battery Capacity: 0x%x (%d) mAh\n", SR1.getBatteryCapacity(), SR1.getBatteryCapacity());
     
+    SR1.registerCallback(6,multiply);
+    if(SR1.handleCallbacks() == 0)
+        printf("Callback success!\n");
+    else
+        printf("Callback failure!\n");
     return 0;
 }
 

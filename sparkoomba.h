@@ -39,6 +39,8 @@ extern "C" {
 #define BATTERY_CHARGE 16
 #define BATTERY_CAPACITY 17
 
+#define NO_CALLBACK 0
+
 #define ALLOWSENSOROVERRIDE
 class Sparkoomba
 {
@@ -85,6 +87,9 @@ private:
     unsigned char currSensorData[26];
     unsigned char prevSensorData[26];
     int (*cbFunc[18])();  // A function pointer to callback functions
+    
+    // Callback stuff
+    int handleCallback(int sensorNum);
     
     // Sensor Stuff
     unsigned char getChargingState(bool oldData);

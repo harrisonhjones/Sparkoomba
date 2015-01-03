@@ -193,32 +193,41 @@ int Sparkoomba::registerCallback(unsigned char sensorType, int (*cbFunc)(void))
     }
 }
 
+int Sparkoomba::handleCallback(int sensorNum)
+{
+    if (this->cbFunc[sensorNum] == 0)
+    {
+        printf("No callback registered for sensor #%d\n",sensorNum);
+    }
+    else
+    {
+        int result = (this->cbFunc[sensorNum]());
+        if(result != 1)
+        {
+            printf("Callback registered for sensor #%d failed with result: %d\n",sensorNum, result);
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int Sparkoomba::handleCallbacks()
 {
     int errors = 0;
-    for(int i = 0; i<18; i++)
-    {
-        if(this->currSensorData[i]!=this->prevSensorData[i])
-        {
-            if (this->cbFunc[i] == 0)
-            {
-                printf("No callback registered for sensor #%d\n",i);
-            }
-            else
-            {
-                int result = (this->cbFunc[i]());
-                if(result != 1)
-                {
-                    printf("Callback registered for sensor #%d failed with result: %d\n",i, result);
-                    errors++;
-                }
-            }
-        }
-        else
-        {
-            printf("No change in sensor #%d\n",i);
-        }
-    }
+    
+    if(getChargingState(true) != getChargingState(false))
+        errors += this->handleCallback(CHARGING_STATE);
+    if(getVoltage(true) != getVoltage(false))
+        errors += this->handleCallback(VOLTAGE);
+    if(getCurrent(true) != getCurrent(false))
+        errors += this->handleCallback(CURRENT);
+    if(getBatteryTemp(true) != getBatteryTemp(false))
+        errors += this->handleCallback(BATTERY_TEMP);
+    if(getBatteryCharge(true) != getBatteryCharge(false))
+        errors += this->handleCallback(BATTERY_CHARGE);
+    if(getBatteryCapacity(true) != getBatteryCapacity(false))
+        errors += this->handleCallback(BATTERY_CAPACITY);
+    
     return errors;
 }
 

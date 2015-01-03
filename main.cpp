@@ -22,10 +22,36 @@ char* lpBuffer = new char[500];
  * 
  */
 
+
+int chargingStateCallback()
+{
+    printf("The charging state changed!\n");
+    return -1;
+}
+int voltageCallback()
+{
+    printf("The voltage changed!\n");
+    return -1;
+}
+int currentCallback()
+{
+    printf("The current changed!\n");
+    return -1;
+}
 int batteryTempCallback()
 {
     printf("The battery temp changed!\n");
-    return 1;
+    return -1;
+}
+int batteryChargeCallback()
+{
+    printf("The battery charge changed!\n");
+    return -1;
+}
+int batteryCapacityCallback()
+{
+    printf("The battery capacity changed!\n");
+    return -1;
 }
 
 
@@ -69,8 +95,14 @@ int main(int argc, char** argv) {
         printf("Callback success!\n");
     else
         printf("Callback failure!\n");*/
-    
+    SR1.registerCallback(CHARGING_STATE,chargingStateCallback);
+    SR1.registerCallback(VOLTAGE,voltageCallback);
+    SR1.registerCallback(CURRENT,currentCallback);
     SR1.registerCallback(BATTERY_TEMP,batteryTempCallback);
+    SR1.registerCallback(BATTERY_CHARGE,batteryChargeCallback);
+    SR1.registerCallback(BATTERY_CAPACITY,batteryCapacityCallback);
+
+    
     
     SR1.setChargingState(4);
     SR1.setVoltage(17531);
@@ -86,10 +118,19 @@ int main(int argc, char** argv) {
     printf("Battery Charge: 0x%x (%d) mAh\n", SR1.getBatteryCharge(), SR1.getBatteryCharge());
     printf("Battery Capacity: 0x%x (%d) mAh\n", SR1.getBatteryCapacity(), SR1.getBatteryCapacity());
     
-    if(SR1.handleCallbacks() == 0)
+    int callbackErrors = SR1.handleCallbacks();
+    if(callbackErrors == 0)
         printf("Callback success!\n");
     else
-        printf("Callback failure!\n");
+        printf("Callback failure. Failure num: %d!\n", callbackErrors);
+    
+    SR1.registerCallback(BATTERY_CAPACITY,NO_CALLBACK);
+    
+    callbackErrors = SR1.handleCallbacks();
+    if(callbackErrors == 0)
+        printf("Callback success!\n");
+    else
+        printf("Callback failure. Failure num: %d!\n", callbackErrors);
             
 #ifdef RUN_UNIT_TESTS
     printf("Running unit test for setChargingState(i)\n");

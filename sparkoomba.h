@@ -117,8 +117,9 @@ public:
     unsigned short getBatteryCapacity();
     
     int registerCallback(unsigned char sensorType, int (*cbFunc)(void));
+    int handleCallbacks(bool forceAllCallbacks);
     int handleCallbacks();
-   
+    
     // Sensor Setters
     #ifdef ALLOWSENSOROVERRIDE
     void setBumpsWheelDrops(unsigned char dBumbsWheelDrops);

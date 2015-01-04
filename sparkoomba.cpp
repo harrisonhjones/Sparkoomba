@@ -367,19 +367,24 @@ int Sparkoomba::handleCallback(int sensorNum)
 
 int Sparkoomba::handleCallbacks()
 {
+    return this->handleCallbacks(false);
+}
+
+int Sparkoomba::handleCallbacks(bool forceAllCallbacks)
+{
     int errors = 0;
     
-    if(getChargingState(true) != getChargingState(false))
+    if((getChargingState(true) != getChargingState(false)) || forceAllCallbacks)
         errors += this->handleCallback(CHARGING_STATE);
-    if(getVoltage(true) != getVoltage(false))
+    if((getVoltage(true) != getVoltage(false)) || forceAllCallbacks)
         errors += this->handleCallback(VOLTAGE);
-    if(getCurrent(true) != getCurrent(false))
+    if((getCurrent(true) != getCurrent(false)) || forceAllCallbacks)
         errors += this->handleCallback(CURRENT);
-    if(getBatteryTemp(true) != getBatteryTemp(false))
+    if((getBatteryTemp(true) != getBatteryTemp(false)) || forceAllCallbacks)
         errors += this->handleCallback(BATTERY_TEMP);
-    if(getBatteryCharge(true) != getBatteryCharge(false))
+    if((getBatteryCharge(true) != getBatteryCharge(false)) || forceAllCallbacks)
         errors += this->handleCallback(BATTERY_CHARGE);
-    if(getBatteryCapacity(true) != getBatteryCapacity(false))
+    if((getBatteryCapacity(true) != getBatteryCapacity(false)) || forceAllCallbacks)
         errors += this->handleCallback(BATTERY_CAPACITY);
     //printf("Num errors: %d\n",errors);
     return errors;
@@ -446,7 +451,6 @@ int Sparkoomba::handleCallbacks()
         this->currSensorData[14] = dAngle>>8;
         this->currSensorData[15] = dAngle;
     }
-    
     void Sparkoomba::setChargingState(unsigned char dChargingState){
         this->currSensorData[16] = dChargingState;
     }

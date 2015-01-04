@@ -44,6 +44,14 @@ extern "C" {
 #define SAFE 2
 #define FULL 3
 
+// Roomba Charging States
+#define NOT_CHARGING 0
+#define CHARGING_RECOVERY 1
+#define CHARGING 2
+#define TRICKLE_CHARGING 3
+#define WAITING 4
+#define CHARGING_ERROR 5
+
 // Sensor IDs
 #define BUMPS_AND_WHEEL_DROPS 0
 #define WALL 1

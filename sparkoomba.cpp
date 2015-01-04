@@ -23,13 +23,23 @@
 
 Sparkoomba::Sparkoomba()
 {
-    Sparkoomba(57600,0);
+    Sparkoomba(57600,0, false);
 }
 Sparkoomba::Sparkoomba(int baud, int ddPin)
 {
+    Sparkoomba(baud, ddPin, false);
+}
+
+Sparkoomba::Sparkoomba(int ddPin, bool automaticMode)
+{
+    Sparkoomba(57600, ddPin, automaticMode);
+}
+Sparkoomba::Sparkoomba(int baud, int ddPin, bool automaticMode)
+{
     this->baud = baud;
     this->ddPin = ddPin;
-    printf("Sparkoomba Created\nBaud: %d\nddPin: %d", baud, ddPin);
+    this->automaticMode = automaticMode;
+    printf("Sparkoomba Created\nBaud: %d\nddPin: %d\nAutomatic Mode: %d\n", baud, ddPin, automaticMode);
 }
 void Sparkoomba::goForward()
 {

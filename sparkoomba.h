@@ -80,6 +80,8 @@ class Sparkoomba
 public:
     Sparkoomba();
     Sparkoomba(int baud, int ddPin);
+    Sparkoomba(int ddPin, bool automaticMode);
+    Sparkoomba(int baud, int ddPin, bool automaticMode);
     void goForward();
     void goBackward();
     void spinLeft();
@@ -146,8 +148,9 @@ public:
     
 private:
     // Physical Roomba Connection Variables
-    int ddPin = 0;
-    int baud = 19200;
+    int ddPin;
+    int baud;
+    bool automaticMode;
     
     // Roomba Sensor Variables
     unsigned char currSensorData[26];

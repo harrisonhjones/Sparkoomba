@@ -29,7 +29,6 @@ Sparkoomba::Sparkoomba(int baud, int ddPin)
 {
     Sparkoomba(baud, ddPin, false);
 }
-
 Sparkoomba::Sparkoomba(int ddPin, bool automaticMode)
 {
     Sparkoomba(57600, ddPin, automaticMode);
@@ -39,8 +38,37 @@ Sparkoomba::Sparkoomba(int baud, int ddPin, bool automaticMode)
     this->baud = baud;
     this->ddPin = ddPin;
     this->automaticMode = automaticMode;
+    this->oiState = STATE_SLEEP;
+    
+    #if defined (__cplusplus)
     printf("Sparkoomba Created\nBaud: %d\nddPin: %d\nAutomatic Mode: %d\n", baud, ddPin, automaticMode);
+    #else
+    #if defined (SPARK) || defined (ARDUINO))
+    #warning "Might be a good place for some debugging"
+    #endif
+    #endif
 }
+unsigned char Sparkoomba::getOIState()
+{
+    return this->oiState;
+}
+void Sparkoomba::wakeUp()
+{
+    #if defined (__cplusplus)
+    printf("[ROOMBA_ACTION] WAKE UP NEO\n");
+    #else
+    #if defined (SPARK) || defined (ARDUINO))
+    // wake up the robot
+    pinMode(this->ddPin, OUTPUT);
+    digitalWrite(this->ddPin, LOW);                         // 500ms LOW signal wakes up the robot (docs says 100ms is enough))
+    delay(500);
+    digitalWrite(this->ddPin, HIGH);                        // Send it back HIGH once the robot is awake
+    delay(2000);
+    #endif
+    #endif
+    this->oiState = STATE_OFF;
+}
+
 void Sparkoomba::goForward()
 {
     printf("goForward");

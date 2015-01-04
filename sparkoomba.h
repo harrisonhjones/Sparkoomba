@@ -39,10 +39,11 @@ extern "C" {
 #define CMD_FORCE_SEEK_DOCK 143
 
 // Roomba SCI States
-#define OFF 0
-#define PASSIVE 1
-#define SAFE 2
-#define FULL 3
+#define STATE_SLEEP 0
+#define STATE_OFF 1
+#define STATE_PASSIVE 2
+#define STATE_SAFE 3
+#define STATE_FULL 4
 
 // Roomba Charging States
 #define NOT_CHARGING 0
@@ -82,6 +83,11 @@ public:
     Sparkoomba(int baud, int ddPin);
     Sparkoomba(int ddPin, bool automaticMode);
     Sparkoomba(int baud, int ddPin, bool automaticMode);
+    
+    // Hardware Level Roomba Functions
+    void wakeUp();
+    
+    // SCI Level Roomba Functions
     void goForward();
     void goBackward();
     void spinLeft();
@@ -95,6 +101,7 @@ public:
     void clean();
     void gainControl();
     
+    // Internal State Functions
     // Sensor Getters
     unsigned char getBumpsWheelDrops();
     bool getWall();
@@ -118,6 +125,9 @@ public:
     unsigned short getBatteryCharge();
     unsigned short getBatteryCapacity();
     
+    unsigned char getOIState();
+    
+    // Callback functions
     int registerCallback(unsigned char sensorType, int (*cbFunc)(void));
     int handleCallbacks(bool forceAllCallbacks);
     int handleCallbacks();
@@ -158,8 +168,7 @@ private:
     int (*cbFunc[18])();  // A function pointer to callback functions
     
     // Roomba State Variables
-    bool forceStateChange = false;
-    char roombaState = 0;
+    unsigned char oiState;
     
     // Callback stuff
     int handleCallback(int sensorNum);

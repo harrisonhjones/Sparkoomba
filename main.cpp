@@ -102,6 +102,7 @@ int main(int argc, char** argv) {
     }
     else
         printf("Unable to open serial port!");*/
+    SR1.begin();
     SR1.wakeUp();
     
     //printf("Hello World!\n");

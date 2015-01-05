@@ -52,6 +52,20 @@ unsigned char Sparkoomba::getOIState()
 {
     return this->oiState;
 }
+
+void Sparkoomba::begin()
+{
+    #if defined (__cplusplus)
+    printf("[ROOMBA_ACTION] Begin Called\n");
+    #else
+    #if defined (SPARK) || defined (ARDUINO))
+    SERIAL_BEGIN(this->baud);
+    pinMode(this->ddPin, OUTPUT);
+    digitalWrite(this->ddPin, HIGH);
+    #endif
+    #endif
+}
+
 void Sparkoomba::wakeUp()
 {
     #if defined (__cplusplus)
@@ -59,7 +73,6 @@ void Sparkoomba::wakeUp()
     #else
     #if defined (SPARK) || defined (ARDUINO))
     // wake up the robot
-    pinMode(this->ddPin, OUTPUT);
     digitalWrite(this->ddPin, LOW);                         // 500ms LOW signal wakes up the robot (docs says 100ms is enough))
     delay(500);
     digitalWrite(this->ddPin, HIGH);                        // Send it back HIGH once the robot is awake
@@ -90,10 +103,10 @@ void Sparkoomba::sendCommand(unsigned char cmd, unsigned char *dataOut,  unsigne
     #else
     #if defined (SPARK) || defined (ARDUINO))
     // wake up the robot
-    Serial1.write(cmd);
+    SERIAL_SEND(cmd);
     for(int i = 0; i<dataOutNum; i++)
     {
-        Serial1.write(dataOut[i]);
+        SERIAL_SEND(dataOut[i]);
     }
     #endif
     #endif

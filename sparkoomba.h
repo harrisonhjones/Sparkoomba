@@ -20,6 +20,9 @@ extern "C" {
 #define bumpright (sensorbytes[0] & 0x01)
 #define bumpleft  (sensorbytes[0] & 0x02)
 
+#define SERIAL_BEGIN(baud) Serial.begin(baud)
+#define SERIAL_SEND(byte) Serial.write(byte)
+
 // Roomba SCI Op Codes
 #define CMD_START 128
 #define CMD_BAUD 129
@@ -83,6 +86,7 @@ public:
     Sparkoomba(int baud, int ddPin);
     Sparkoomba(int ddPin, bool automaticMode);
     Sparkoomba(int baud, int ddPin, bool automaticMode);
+    void begin();
     
     // Hardware Level Roomba Functions
     void wakeUp();

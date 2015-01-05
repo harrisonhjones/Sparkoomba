@@ -226,6 +226,9 @@ void Sparkoomba::updateSensors()
     this->currSensorData[23] = 0xC4;   //23   Battery Charge LSB
     this->currSensorData[24] = 0x0B;   //24   Battery Capacity MSB (3,000 mAh)
     this->currSensorData[25] = 0xB8;   // 25   Battery Capacity LSB
+    
+    // Not sure if we should do this each sensor update. It would make sense tho... Make callbacks automatic
+    // this->handleCallbacks();
 }
 
 void Sparkoomba::playSong()

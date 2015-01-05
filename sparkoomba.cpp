@@ -66,7 +66,45 @@ void Sparkoomba::wakeUp()
     delay(2000);
     #endif
     #endif
-    this->oiState = STATE_OFF;
+    this->setOIState(STATE_OFF);
+    this->start();
+}
+void Sparkoomba::setOIState(unsigned char oiState)
+{
+    this->oiState = oiState;
+    printf("[OI_STATE]: %d\n", oiState);
+    // Should probably call a callback here (TODO)
+}
+void Sparkoomba::sendCommand(unsigned char cmd, unsigned char *dataOut,  unsigned int dataOutNum)
+{
+    #if defined (__cplusplus)
+    printf("[SEND_COMMAND] %d: [", cmd);
+    for(int i = 0; i<dataOutNum; i++)
+    {
+        if(i == dataOutNum-1)
+            printf("%d",dataOut[i]);
+        else
+            printf("%d,",dataOut[i]);
+    }
+    printf("]\n");
+    #else
+    #if defined (SPARK) || defined (ARDUINO))
+    // wake up the robot
+    Serial1.write(cmd);
+    for(int i = 0; i<dataOutNum; i++)
+    {
+        Serial1.write(dataOut[i]);
+    }
+    #endif
+    #endif
+}
+void Sparkoomba::start()
+{
+    // OPCode: 128
+    // Data Bytes: 0
+    // Description: Starts the SCI. The Start command must be sent before any other SCI commands. This command puts the SCI in passive mode.
+    this->sendCommand(CMD_START,0,0);
+    this->setOIState(STATE_PASSIVE);
 }
 
 void Sparkoomba::goForward()

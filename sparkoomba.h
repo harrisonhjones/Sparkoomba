@@ -88,6 +88,7 @@ public:
     void wakeUp();
     
     // SCI Level Roomba Functions
+    void start();
     void goForward();
     void goBackward();
     void spinLeft();
@@ -132,6 +133,9 @@ public:
     int handleCallbacks(bool forceAllCallbacks);
     int handleCallbacks();
     
+    // Object Setters
+    void setOIState(unsigned char oiState);
+    
     // Sensor Setters
     #ifdef ALLOWSENSOROVERRIDE
     void setBumpsWheelDrops(unsigned char dBumbsWheelDrops);
@@ -172,6 +176,9 @@ private:
     
     // Callback stuff
     int handleCallback(int sensorNum);
+    
+    // Command Sending Stuff
+    void sendCommand(unsigned char cmd, unsigned char *dataOut, unsigned int dataOutNum);
     
     // Sensor Stuff
     unsigned char getBumpsWheelDrops(bool oldData);

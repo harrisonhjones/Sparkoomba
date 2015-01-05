@@ -39,6 +39,8 @@ Sparkoomba::Sparkoomba(unsigned int _baud, unsigned char _ddPin, bool automaticM
     this->_ddPin = _ddPin;
     this->_automaticMode = automaticMode;
     this->_oiState = STATE_SLEEP;
+    this->lastCommand = 255;
+    this->lastCommandSuccess = false;
     
     #if defined (__cplusplus)
     printf("Sparkoomba Created\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", _baud, _ddPin, automaticMode);

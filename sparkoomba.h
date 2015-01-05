@@ -70,8 +70,8 @@ extern "C" {
 #define WAITING 4
 #define CHARGING_ERROR 5
 
-// Sensor IDs
-#define CALLBACK_NUM 20
+// Sensor Call Backs
+#define CALLBACK_NUM 28
 #define CB_BUMPS_AND_WHEEL_DROPS 0
 #define CB_WALL 1
 #define CB_CLIFF_LEFT 2
@@ -90,8 +90,19 @@ extern "C" {
 #define CB_BATTERY_TEMP 15
 #define CB_BATTERY_CHARGE 16
 #define CB_BATTERY_CAPACITY 17
+// Other Callbacks
 #define CB_OI_STATE 18
-#define CB_BAUD 19
+#define CB_BAUD 20
+// Not Yet Implemented Callbacks
+#define CB_START 19
+#define CB_CONTROL 21
+#define CB_SAFE 22
+#define CB_FULL 23
+#define CB_POWER 24
+#define CB_SPOT 25
+#define CB_CLEAN 26
+#define CB_MAX_CLEAN 27
+
 
 #define NO_CALLBACK 0
 
@@ -197,6 +208,9 @@ private:
     unsigned char _ddPin;
     unsigned int _baud;
     bool _automaticMode;
+    
+    unsigned char lastCommand;
+    bool lastCommandSuccess;
     
     // Roomba Sensor Variables
     unsigned char currSensorData[26];

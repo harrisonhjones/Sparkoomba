@@ -88,8 +88,7 @@ void Sparkoomba::wakeUp()
 void Sparkoomba::setOIState(unsigned char oiState)
 {
     this->_oiState = oiState;
-    printf("[OI_STATE]: %d\n", oiState);
-    // Should probably call a callback here (TODO)
+    this->handleCallback(CB_OI_STATE);
 }
 void Sparkoomba::sendCommand(unsigned char cmd, unsigned char *dataOut,  unsigned int dataOutNum)
 {
@@ -170,6 +169,7 @@ bool Sparkoomba::baud(unsigned char baud)
     unsigned char data[] = {baud};
     this->sendCommand(CMD_BAUD,data,1);
     this->begin();
+    this->handleCallback(CB_BAUD);
     return true;
 }
 
@@ -492,18 +492,18 @@ int Sparkoomba::registerCallback(unsigned char sensorType, int (*cbFunc)(void))
     }
 }
 
-int Sparkoomba::handleCallback(int sensorNum)
+int Sparkoomba::handleCallback(unsigned char callbackNum)
 {
-    if (this->cbFunc[sensorNum] == 0)
+    if (this->cbFunc[callbackNum] == 0)
     {
-        //printf("No callback registered for sensor #%d\n",sensorNum);
+        //printf("No callback registered for sensor #%d\n",callbackNum);
     }
     else
     {
-        int result = (this->cbFunc[sensorNum]());
+        int result = (this->cbFunc[callbackNum]());
         if(result != 1)
         {
-            //printf("Callback registered for sensor #%d failed with result: %d\n",sensorNum, result);
+            //printf("Callback registered for sensor #%d failed with result: %d\n",callbackNum, result);
             return 1;
         }
     }
@@ -520,17 +520,17 @@ int Sparkoomba::handleCallbacks(bool forceAllCallbacks)
     int errors = 0;
     
     if((getChargingState(true) != getChargingState(false)) || forceAllCallbacks)
-        errors += this->handleCallback(CHARGING_STATE);
+        errors += this->handleCallback(CB_CHARGING_STATE);
     if((getVoltage(true) != getVoltage(false)) || forceAllCallbacks)
-        errors += this->handleCallback(VOLTAGE);
+        errors += this->handleCallback(CB_VOLTAGE);
     if((getCurrent(true) != getCurrent(false)) || forceAllCallbacks)
-        errors += this->handleCallback(CURRENT);
+        errors += this->handleCallback(CB_CURRENT);
     if((getBatteryTemp(true) != getBatteryTemp(false)) || forceAllCallbacks)
-        errors += this->handleCallback(BATTERY_TEMP);
+        errors += this->handleCallback(CB_BATTERY_TEMP);
     if((getBatteryCharge(true) != getBatteryCharge(false)) || forceAllCallbacks)
-        errors += this->handleCallback(BATTERY_CHARGE);
+        errors += this->handleCallback(CB_BATTERY_CHARGE);
     if((getBatteryCapacity(true) != getBatteryCapacity(false)) || forceAllCallbacks)
-        errors += this->handleCallback(BATTERY_CAPACITY);
+        errors += this->handleCallback(CB_BATTERY_CAPACITY);
     //printf("Num errors: %d\n",errors);
     return errors;
 }

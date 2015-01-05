@@ -78,9 +78,22 @@ int batteryCapacityCallback()
     printf("The battery capacity changed!\n");
     return -1;
 }
-
+int baudCallback()
+{
+    printf("[Callback] - Baud: %d\n", SR1.getBaud());
+    return -1;
+}
+int oiStateCallback()
+{
+    printf("[Callback] - OIState: %d\n", SR1.getOIState());
+    return -1;
+}
 
 int main(int argc, char** argv) {
+    SR1.registerCallback(CB_CHARGING_STATE,chargingStateCallback);
+    SR1.registerCallback(CB_BAUD,baudCallback);
+    SR1.registerCallback(CB_OI_STATE,oiStateCallback);
+    
     // Connect the serial object
     /*if (serial.Open(4, 9600))
     {
@@ -124,7 +137,7 @@ int main(int argc, char** argv) {
         printf("Callback success!\n");
     else
         printf("Callback failure!\n");*/
-    SR1.registerCallback(CHARGING_STATE,chargingStateCallback);
+    
     //SR1.registerCallback(VOLTAGE,voltageCallback);
     //SR1.registerCallback(CURRENT,currentCallback);
     //SR1.registerCallback(BATTERY_TEMP,batteryTempCallback);
@@ -408,12 +421,12 @@ int main(int argc, char** argv) {
     unitTestFailures = 0;
     printf("===== Running Unit Tests for Callbacks =====\n");
     printf("Running unit test for CHARGING_STATE Callback\n");
-    SR1.registerCallback(CHARGING_STATE,chargingStateCallback);
-    SR1.registerCallback(VOLTAGE,NO_CALLBACK);
-    SR1.registerCallback(CURRENT,NO_CALLBACK);
-    SR1.registerCallback(BATTERY_TEMP,NO_CALLBACK);
-    SR1.registerCallback(BATTERY_CHARGE,NO_CALLBACK);
-    SR1.registerCallback(BATTERY_CAPACITY,NO_CALLBACK);
+    SR1.registerCallback(CB_CHARGING_STATE,chargingStateCallback);
+    SR1.registerCallback(CB_VOLTAGE,NO_CALLBACK);
+    SR1.registerCallback(CB_CURRENT,NO_CALLBACK);
+    SR1.registerCallback(CB_BATTERY_TEMP,NO_CALLBACK);
+    SR1.registerCallback(CB_BATTERY_CHARGE,NO_CALLBACK);
+    SR1.registerCallback(CB_BATTERY_CAPACITY,NO_CALLBACK);
     SR1.setChargingState(4);
     int callbackErrors = SR1.handleCallbacks();
     if(callbackErrors != 1)

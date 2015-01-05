@@ -71,24 +71,27 @@ extern "C" {
 #define CHARGING_ERROR 5
 
 // Sensor IDs
-#define BUMPS_AND_WHEEL_DROPS 0
-#define WALL 1
-#define CLIFF_LEFT 2
-#define CLIFF_FRONT_LEFT 3
-#define CLIFF_FRONT_RIGHT 4
-#define CLIFF_RIGHT 5
-#define VIRTUAL_WALL 6
-#define OVERCURRENTS 7
-#define IR_BYTE 8
-#define BUTTONS 9
-#define DISTANCE 10
-#define ANGLE 11
-#define CHARGING_STATE 12
-#define VOLTAGE 13
-#define CURRENT 14
-#define BATTERY_TEMP 15
-#define BATTERY_CHARGE 16
-#define BATTERY_CAPACITY 17
+#define CALLBACK_NUM 20
+#define CB_BUMPS_AND_WHEEL_DROPS 0
+#define CB_WALL 1
+#define CB_CLIFF_LEFT 2
+#define CB_CLIFF_FRONT_LEFT 3
+#define CB_CLIFF_FRONT_RIGHT 4
+#define CB_CLIFF_RIGHT 5
+#define CB_VIRTUAL_WALL 6
+#define CB_OVERCURRENTS 7
+#define CB_IR_BYTE 8
+#define CB_BUTTONS 9
+#define CB_DISTANCE 10
+#define CB_ANGLE 11
+#define CB_CHARGING_STATE 12
+#define CB_VOLTAGE 13
+#define CB_CURRENT 14
+#define CB_BATTERY_TEMP 15
+#define CB_BATTERY_CHARGE 16
+#define CB_BATTERY_CAPACITY 17
+#define CB_OI_STATE 18
+#define CB_BAUD 19
 
 #define NO_CALLBACK 0
 
@@ -152,6 +155,7 @@ public:
     int registerCallback(unsigned char sensorType, int (*cbFunc)(void));
     int handleCallbacks(bool forceAllCallbacks);
     int handleCallbacks();
+    int handleCallback(unsigned char  callbackNum);
     
     // Object Setters
     void setOIState(unsigned char oiState);
@@ -189,13 +193,10 @@ private:
     // Roomba Sensor Variables
     unsigned char currSensorData[26];
     unsigned char prevSensorData[26];
-    int (*cbFunc[18])();  // A function pointer to callback functions
+    int (*cbFunc[CALLBACK_NUM])();  // A function pointer to callback functions
     
     // Roomba State Variables
     unsigned char _oiState;
-    
-    // Callback stuff
-    int handleCallback(int sensorNum);
     
     // Command Sending Stuff
     void sendCommand(unsigned char cmd, unsigned char *dataOut, unsigned int dataOutNum);

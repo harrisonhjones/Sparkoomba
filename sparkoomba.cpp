@@ -42,6 +42,15 @@ Sparkoomba::Sparkoomba(unsigned int _baud, unsigned char _ddPin, bool automaticM
     this->lastCommand = 255;
     this->lastCommandSuccess = false;
     
+    this->_statusRedLED = false;
+    this->_statusGreenLED = false;
+    this->_spotLED = false;
+    this->_cleanLED = false;
+    this->_maxLED = false;
+    this->_dirtDetectLED = false;
+    this->_powerLEDcolor = 125; // Orange
+    this->_powerLEDintensity = 255; // Full Intensity
+    
     #if defined (__cplusplus)
     printf("Sparkoomba Created\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", _baud, _ddPin, automaticMode);
     #else
@@ -85,7 +94,7 @@ void Sparkoomba::wakeUp()
     #endif
     #endif
     this->setOIState(STATE_OFF);
-    this->start();
+    this->cmdStart();
 }
 void Sparkoomba::setOIState(unsigned char oiState)
 {
@@ -99,9 +108,9 @@ void Sparkoomba::sendCommand(unsigned char cmd, unsigned char *dataOut,  unsigne
     for(int i = 0; i<dataOutNum; i++)
     {
         if(i == dataOutNum-1)
-            printf("%d",dataOut[i]);
+            printf("%X",dataOut[i]);
         else
-            printf("%d,",dataOut[i]);
+            printf("%X,",dataOut[i]);
     }
     printf("]\n");
     #else
@@ -115,22 +124,24 @@ void Sparkoomba::sendCommand(unsigned char cmd, unsigned char *dataOut,  unsigne
     #endif
     #endif
 }
-void Sparkoomba::start()
+void Sparkoomba::cmdStart()
 {
     // OPCode: 128
     // Data Bytes: 0
     // Description: Starts the SCI. The Start command must be sent before any 
     // other SCI commands. This command puts the SCI in passive mode.
     // State Accepted: ??
+    // State Change: passive
     this->sendCommand(CMD_START,0,0);
     this->setOIState(STATE_PASSIVE);
 }
-bool Sparkoomba::baud(unsigned char baud)
+bool Sparkoomba::cmdBaud(unsigned char baud)
 {
     // OPCode: 129
     // Data Bytes: 1 (the baud))
     // Description: See SCI Specification
     // State Accepted: passive, safe, or full
+    // State Change: none
     
     if((this->getOIState() != STATE_PASSIVE) && (this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
         return false;
@@ -181,7 +192,7 @@ bool Sparkoomba::baud(unsigned char baud)
     this->handleCallback(CB_BAUD);
     return true;
 }
-bool Sparkoomba::control()
+bool Sparkoomba::cmdControl()
 {
     // OPCode: 130
     // Data Bytes: 0
@@ -190,26 +201,28 @@ bool Sparkoomba::control()
     // The SCI must be in passive mode to accept this command. This command puts
     // the SCI in safe mode
     // State Accepted: passive
+    // State Change: safe
     if(this->getOIState() != STATE_PASSIVE)
         return false;
     this->sendCommand(CMD_CONTROL,0,0);
     this->setOIState(STATE_SAFE);
     return true;
 }
-bool Sparkoomba::safe()
+bool Sparkoomba::cmdSafe()
 {
     // OPCode: 131
     // Data Bytes: 0
     // Description: This command puts the SCI in safe mode. The SCI must be in
     // full mode to accept this command. 
     // State Accepted: full
+    // State Change: safe
     if(this->getOIState() != STATE_FULL)
         return false;
     this->sendCommand(CMD_SAFE,0,0);
     this->setOIState(STATE_SAFE);
     return true;
 }
-bool Sparkoomba::full()
+bool Sparkoomba::cmdFull()
 {
     // OPCode: 132
     // Data Bytes: 0
@@ -217,13 +230,14 @@ bool Sparkoomba::full()
     // turns off the safety features. The SCI must be in safe mode to accept 
     // this command. This command puts the SCI in full mode.
     // State Accepted: safe
+    // State Change: full
     if(this->getOIState() != STATE_SAFE)
         return false;
     this->sendCommand(CMD_FULL,0,0);
     this->setOIState(STATE_FULL);
     return true;
 }
-bool Sparkoomba::power()
+bool Sparkoomba::cmdPower()
 {
     // OPCode: 133
     // Data Bytes: 0
@@ -232,13 +246,14 @@ bool Sparkoomba::power()
     // Roomba from sleep. The SCI must be in safe or full mode to accept this 
     // command. This command puts the SCI in passive mode
     // State Accepted: safe or full
+    // State Change: sleep
     if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
         return false;
     this->sendCommand(CMD_POWER,0,0);
     this->setOIState(STATE_SLEEP);
     return true;
 }
-bool Sparkoomba::spot()
+bool Sparkoomba::cmdSpot()
 {
     // OPCode: 134
     // Data Bytes: 0
@@ -246,13 +261,14 @@ bool Sparkoomba::spot()
     // button press. The SCI must be in safe or full mode to accept this 
     // command. This command puts the SCI in passive mode.
     // State Accepted: safe or full
+    // State Change: passive
     if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
         return false;
     this->sendCommand(CMD_SPOT,0,0);
     this->setOIState(STATE_PASSIVE);
     return true;
 }
-bool Sparkoomba::clean()
+bool Sparkoomba::cmdClean()
 {
     // OPCode: 135
     // Data Bytes: 0
@@ -260,13 +276,14 @@ bool Sparkoomba::clean()
     // button press. The SCI must be in safe or full mode to accept this
     // command. This command puts the SCI in passive mode.
     // State Accepted: safe or full
+    // State Change: passive
     if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
         return false;
     this->sendCommand(CMD_CLEAN,0,0);
     this->setOIState(STATE_PASSIVE);
     return true;
 }
-bool Sparkoomba::maxClean()
+bool Sparkoomba::cmdMax()
 {
     // OPCode: 136
     // Data Bytes: 0
@@ -274,33 +291,61 @@ bool Sparkoomba::maxClean()
     // “max” button press. The SCI must be in safe or full mode to accept this 
     // command. This command puts the SCI in passive mode.
     // State Accepted: safe or full
+    // State Change: passive
     if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
         return false;
     this->sendCommand(CMD_MAX,0,0);
     this->setOIState(STATE_PASSIVE);
     return true;
 }
-void Sparkoomba::goForward()
+bool Sparkoomba::cmdDrive(short velocity, short radius)
 {
-    printf("goForward");
+    // OPCode: 137
+    // Data Bytes: 4
+    // Description: See SCI manual
+    // State Accepted: safe or full
+    // State Change: none
+    if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    unsigned char data[] = {velocity>>8,velocity,radius>>8,radius};
+    this->sendCommand(CMD_DRIVE,data,4);
+    return true;
 }
-void Sparkoomba::goBackward()
-{ 
-    printf("goBackward");
-}
-void Sparkoomba::spinLeft()
+bool Sparkoomba::cmdMotors(bool mainBrush, bool vacuum, bool sideBrush)
 {
-    printf("spinLeft");
+    // OPCode: 138
+    // Data Bytes: 1
+    // Description: Controls Roomba’s cleaning motors. The state of each motor 
+    // is specified by one bit in the data byte. The SCI must be in safe or full
+    // mode to accept this command. This command does not change the mode.
+    // State Accepted: safe or full
+    // State Change: none
+    if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    unsigned char motorData = mainBrush << 2 | vacuum << 1 | sideBrush; 
+    unsigned char data[] = {motorData};
+    this->sendCommand(CMD_MOTORS,data,1);
+    return true;
 }
-void Sparkoomba::spinRight()
+bool Sparkoomba::cmdLEDs(unsigned char ledId, bool state){};
+bool Sparkoomba::cmdLEDsOff(){};
+bool Sparkoomba::cmdPowerLED(unsigned char color, unsigned char intensity){}
+bool Sparkoomba::cmdSong(unsigned char songNum, unsigned char *songNotes, unsigned char *songDuration){}
+bool Sparkoomba::cmdPlay(unsigned char songNum){}
+bool Sparkoomba::cmdForceSeekDock()
 {
-    printf("spinRight");
+    // OPCode: 143
+    // Data Bytes: 0
+    // Description: See SCI manual. This command is weird
+    // State Accepted: any (kind of))
+    // State Change: ??
+    //if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+    //    return false;
+    this->sendCommand(CMD_FORCE_SEEK_DOCK,0,1);
+    return true;
 }
-void Sparkoomba::stop()
-{
-    printf("stop");
-}
-void Sparkoomba::updateSensors()
+
+bool Sparkoomba::cmdSensors()
 {
     // 1. Loads current sensor data into prevSensorData
     memcpy(this->prevSensorData,this->currSensorData,26);
@@ -336,27 +381,8 @@ void Sparkoomba::updateSensors()
     
     // Not sure if we should do this each sensor update. It would make sense tho... Make callbacks automatic
     // this->handleCallbacks();
-}
-
-void Sparkoomba::playSong()
-{
-    printf("playSong");
-}
-void Sparkoomba::vacuumOn()
-{
-    printf("vacuumOn");
-}
-void Sparkoomba::vacuumOff()
-{
-    printf("vacuumOff");
-}
-void Sparkoomba::goHome()
-{
-    printf("goHome");
-}
-void Sparkoomba::gainControl()
-{
-    printf("gainControl");
+    
+    return true;
 }
 
 // Sensor Stuff

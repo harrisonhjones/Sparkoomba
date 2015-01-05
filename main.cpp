@@ -118,18 +118,12 @@ int main(int argc, char** argv) {
         printf("Unable to open serial port!");*/
     SR1.begin();
     SR1.wakeUp();
-    SR1.baud(ROOMBA_BAUD_600);
-    SR1.control();
-    SR1.full();
-    SR1.safe();
-    SR1.clean();
-    SR1.control();
-    SR1.maxClean();
-    SR1.safe();
+    SR1.cmdControl();
+    SR1.cmdSafe();
+    SR1.cmdDrive(-1500, DRIVE_STRAIGHT);
+    SR1.cmdMotors(true,false,true);
     
-    //printf("Hello World!\n");
-    SR1.updateSensors();
-    SR1.updateSensors();
+    
     
     //printf("Size of short: %\n", sizeof(short));
     //printf("Charging: 0x%x (%d) \n", SR1.getChargingState(), SR1.getChargingState());
@@ -151,7 +145,7 @@ int main(int argc, char** argv) {
     //SR1.registerCallback(BATTERY_CHARGE,batteryChargeCallback);
     //SR1.registerCallback(BATTERY_CAPACITY,batteryCapacityCallback);
     // Force All Callback to be called
-    SR1.handleCallbacks(true);
+    /*SR1.handleCallbacks(true);
     SR1.setChargingState(NOT_CHARGING);
     SR1.handleCallbacks();
     SR1.setChargingState(CHARGING_RECOVERY);
@@ -163,7 +157,7 @@ int main(int argc, char** argv) {
     SR1.setChargingState(WAITING);
     SR1.handleCallbacks();
     SR1.setChargingState(CHARGING_ERROR);
-    SR1.handleCallbacks();
+    SR1.handleCallbacks();*/
     
     /*
     SR1.setVoltage(17531);

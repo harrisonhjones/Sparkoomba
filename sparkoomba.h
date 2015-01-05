@@ -103,8 +103,20 @@ extern "C" {
 #define CB_CLEAN 26
 #define CB_MAX_CLEAN 27
 
-
 #define NO_CALLBACK 0
+
+// LEDs
+#define LED_STATUS_RED 4
+#define LED_STATUS_GREEN 5
+#define LED_SPOT 3
+#define LED_CLEAN 2
+#define LED_MAX 1
+#define LED_DIRT_DETECT 0
+
+// Special motor drive stuff
+#define DRIVE_STRAIGHT 32768
+#define DRIVE_CLOCKWISE -1
+#define DRIVE_CCLOCKWISE 1
 
 #define ALLOWSENSOROVERRIDE
 class Sparkoomba
@@ -120,28 +132,24 @@ public:
     void wakeUp();
     
     // SCI Level Roomba Functions
-    void start();
-    bool baud(unsigned char baud);
-    bool control();
-    bool safe();
-    bool full();
-    bool power();
-    bool spot();
-    bool clean();
-    bool maxClean();
-    
-    
-    void goForward();
-    void goBackward();
-    void spinLeft();
-    void spinRight();
-    void stop();
-    void updateSensors();
-    void playSong();
-    void vacuumOn();
-    void vacuumOff();
-    void goHome();
-    void gainControl();
+    void cmdStart();
+    bool cmdBaud(unsigned char baud);
+    bool cmdControl();
+    bool cmdSafe();
+    bool cmdFull();
+    bool cmdPower();
+    bool cmdSpot();
+    bool cmdClean();
+    bool cmdMax();
+    bool cmdDrive(short velocity, short radius);
+    bool cmdMotors(bool mainBrush, bool vacuum, bool sideBrush);
+    bool cmdLEDs(unsigned char ledId, bool state);
+    bool cmdLEDsOff();
+    bool cmdPowerLED(unsigned char color, unsigned char intensity);
+    bool cmdSong(unsigned char songNum, unsigned char *songNotes, unsigned char *songDuration);
+    bool cmdPlay(unsigned char songNum);
+    bool cmdSensors();
+    bool cmdForceSeekDock();
     
     // Internal State Functions
     // Sensor Getters
@@ -244,6 +252,16 @@ private:
     char getBatteryTemp(bool oldData);
     unsigned short getBatteryCharge(bool oldData);
     unsigned short getBatteryCapacity(bool oldData);
+    
+    // LED Variables
+    bool _statusRedLED;
+    bool _statusGreenLED;
+    bool _spotLED;
+    bool _cleanLED;
+    bool _maxLED;
+    bool _dirtDetectLED;
+    unsigned char _powerLEDcolor;
+    unsigned char _powerLEDintensity;
 };
 
 

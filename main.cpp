@@ -10,10 +10,10 @@
 #include "sparkoomba.h"
 #include "Serial.h"
 
-#define RUN_UNIT_TESTS
+/*#define RUN_UNIT_TESTS
 #define RUN_UNIT_TEST_SETTER
 #define RUN_UNIT_TEST_CALLBACK
-#define RUN_UNIT_TEST_COMMANDS
+#define RUN_UNIT_TEST_COMMANDS*/
 
 using namespace std;
 
@@ -119,6 +119,13 @@ int main(int argc, char** argv) {
     SR1.begin();
     SR1.wakeUp();
     SR1.baud(ROOMBA_BAUD_600);
+    SR1.control();
+    SR1.full();
+    SR1.safe();
+    SR1.clean();
+    SR1.control();
+    SR1.maxClean();
+    SR1.safe();
     
     //printf("Hello World!\n");
     SR1.updateSensors();

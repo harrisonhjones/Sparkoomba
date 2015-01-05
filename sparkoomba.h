@@ -111,6 +111,15 @@ public:
     // SCI Level Roomba Functions
     void start();
     bool baud(unsigned char baud);
+    bool control();
+    bool safe();
+    bool full();
+    bool power();
+    bool spot();
+    bool clean();
+    bool maxClean();
+    
+    
     void goForward();
     void goBackward();
     void spinLeft();
@@ -121,7 +130,6 @@ public:
     void vacuumOn();
     void vacuumOff();
     void goHome();
-    void clean();
     void gainControl();
     
     // Internal State Functions

@@ -117,7 +117,9 @@ void Sparkoomba::start()
 {
     // OPCode: 128
     // Data Bytes: 0
-    // Description: Starts the SCI. The Start command must be sent before any other SCI commands. This command puts the SCI in passive mode.
+    // Description: Starts the SCI. The Start command must be sent before any 
+    // other SCI commands. This command puts the SCI in passive mode.
+    // State Accepted: ??
     this->sendCommand(CMD_START,0,0);
     this->setOIState(STATE_PASSIVE);
 }
@@ -125,6 +127,11 @@ bool Sparkoomba::baud(unsigned char baud)
 {
     // OPCode: 129
     // Data Bytes: 1 (the baud))
+    // Description: See SCI Specification
+    // State Accepted: passive, safe, or full
+    
+    if((this->getOIState() != STATE_PASSIVE) && (this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
     switch(baud)
     {
         case ROOMBA_BAUD_300:
@@ -172,7 +179,105 @@ bool Sparkoomba::baud(unsigned char baud)
     this->handleCallback(CB_BAUD);
     return true;
 }
-
+bool Sparkoomba::control()
+{
+    // OPCode: 130
+    // Data Bytes: 0
+    // Description: Enables control of Roomba. The command must be sent after 
+    // the start command and before any control commands are sent to the SCI. 
+    // The SCI must be in passive mode to accept this command. This command puts
+    // the SCI in safe mode
+    // State Accepted: passive
+    if(this->getOIState() != STATE_PASSIVE)
+        return false;
+    this->sendCommand(CMD_CONTROL,0,0);
+    this->setOIState(STATE_SAFE);
+    return true;
+}
+bool Sparkoomba::safe()
+{
+    // OPCode: 131
+    // Data Bytes: 0
+    // Description: This command puts the SCI in safe mode. The SCI must be in
+    // full mode to accept this command. 
+    // State Accepted: full
+    if(this->getOIState() != STATE_FULL)
+        return false;
+    this->sendCommand(CMD_SAFE,0,0);
+    this->setOIState(STATE_SAFE);
+    return true;
+}
+bool Sparkoomba::full()
+{
+    // OPCode: 132
+    // Data Bytes: 0
+    // Description: Enables unrestricted control of Roomba through the SCI and
+    // turns off the safety features. The SCI must be in safe mode to accept 
+    // this command. This command puts the SCI in full mode.
+    // State Accepted: safe
+    if(this->getOIState() != STATE_SAFE)
+        return false;
+    this->sendCommand(CMD_FULL,0,0);
+    this->setOIState(STATE_FULL);
+    return true;
+}
+bool Sparkoomba::power()
+{
+    // OPCode: 133
+    // Data Bytes: 0
+    // Description: Puts Roomba to sleep, the same as a normal “power” button
+    // press. The Device Detect line must be held low for 500 ms to wake up 
+    // Roomba from sleep. The SCI must be in safe or full mode to accept this 
+    // command. This command puts the SCI in passive mode
+    // State Accepted: safe or full
+    if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    this->sendCommand(CMD_POWER,0,0);
+    this->setOIState(STATE_SLEEP);
+    return true;
+}
+bool Sparkoomba::spot()
+{
+    // OPCode: 134
+    // Data Bytes: 0
+    // Description: Starts a spot cleaning cycle, the same as a normal “spot”
+    // button press. The SCI must be in safe or full mode to accept this 
+    // command. This command puts the SCI in passive mode.
+    // State Accepted: safe or full
+    if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    this->sendCommand(CMD_SPOT,0,0);
+    this->setOIState(STATE_PASSIVE);
+    return true;
+}
+bool Sparkoomba::clean()
+{
+    // OPCode: 135
+    // Data Bytes: 0
+    // Description: Starts a normal cleaning cycle, the same as a normal “clean”
+    // button press. The SCI must be in safe or full mode to accept this
+    // command. This command puts the SCI in passive mode.
+    // State Accepted: safe or full
+    if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    this->sendCommand(CMD_CLEAN,0,0);
+    this->setOIState(STATE_PASSIVE);
+    return true;
+}
+bool Sparkoomba::maxClean()
+{
+    // OPCode: 136
+    // Data Bytes: 0
+    // Description: Starts a maximum time cleaning cycle, the same as a normal
+    // “max” button press. The SCI must be in safe or full mode to accept this 
+    // command. This command puts the SCI in passive mode.
+    // State Accepted: safe or full
+    if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    this->sendCommand(CMD_MAX,0,0);
+    this->setOIState(STATE_PASSIVE);
+    return true;
+}
 void Sparkoomba::goForward()
 {
     printf("goForward");
@@ -246,10 +351,6 @@ void Sparkoomba::vacuumOff()
 void Sparkoomba::goHome()
 {
     printf("goHome");
-}
-void Sparkoomba::clean()
-{
-    printf("clean");
 }
 void Sparkoomba::gainControl()
 {

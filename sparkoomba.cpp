@@ -25,23 +25,23 @@ Sparkoomba::Sparkoomba()
 {
     Sparkoomba(57600,0, false);
 }
-Sparkoomba::Sparkoomba(int baud, int ddPin)
+Sparkoomba::Sparkoomba(unsigned int _baud, unsigned char _ddPin)
 {
-    Sparkoomba(baud, ddPin, false);
+    Sparkoomba(_baud, _ddPin, false);
 }
-Sparkoomba::Sparkoomba(int ddPin, bool automaticMode)
+Sparkoomba::Sparkoomba(unsigned char _ddPin, bool automaticMode)
 {
-    Sparkoomba(57600, ddPin, automaticMode);
+    Sparkoomba(57600, _ddPin, automaticMode);
 }
-Sparkoomba::Sparkoomba(int baud, int ddPin, bool automaticMode)
+Sparkoomba::Sparkoomba(unsigned int _baud, unsigned char _ddPin, bool automaticMode)
 {
-    this->baud = baud;
-    this->ddPin = ddPin;
-    this->automaticMode = automaticMode;
-    this->oiState = STATE_SLEEP;
+    this->_baud = _baud;
+    this->_ddPin = _ddPin;
+    this->_automaticMode = automaticMode;
+    this->_oiState = STATE_SLEEP;
     
     #if defined (__cplusplus)
-    printf("Sparkoomba Created\nBaud: %d\nddPin: %d\nAutomatic Mode: %d\n", baud, ddPin, automaticMode);
+    printf("Sparkoomba Created\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", _baud, _ddPin, automaticMode);
     #else
     #if defined (SPARK) || defined (ARDUINO))
     #warning "Might be a good place for some debugging"
@@ -50,18 +50,21 @@ Sparkoomba::Sparkoomba(int baud, int ddPin, bool automaticMode)
 }
 unsigned char Sparkoomba::getOIState()
 {
-    return this->oiState;
+    return this->_oiState;
 }
-
+unsigned int Sparkoomba::getBaud()
+{
+    return this->_baud;
+}
 void Sparkoomba::begin()
 {
     #if defined (__cplusplus)
     printf("[ROOMBA_ACTION] Begin Called\n");
     #else
     #if defined (SPARK) || defined (ARDUINO))
-    SERIAL_BEGIN(this->baud);
-    pinMode(this->ddPin, OUTPUT);
-    digitalWrite(this->ddPin, HIGH);
+    SERIAL_BEGIN(this->_baud);
+    pinMode(this->_ddPin, OUTPUT);
+    digitalWrite(this->_ddPin, HIGH);
     #endif
     #endif
 }
@@ -73,9 +76,9 @@ void Sparkoomba::wakeUp()
     #else
     #if defined (SPARK) || defined (ARDUINO))
     // wake up the robot
-    digitalWrite(this->ddPin, LOW);                         // 500ms LOW signal wakes up the robot (docs says 100ms is enough))
+    digitalWrite(this->_ddPin, LOW);                         // 500ms LOW signal wakes up the robot (docs says 100ms is enough))
     delay(500);
-    digitalWrite(this->ddPin, HIGH);                        // Send it back HIGH once the robot is awake
+    digitalWrite(this->_ddPin, HIGH);                        // Send it back HIGH once the robot is awake
     delay(2000);
     #endif
     #endif
@@ -84,7 +87,7 @@ void Sparkoomba::wakeUp()
 }
 void Sparkoomba::setOIState(unsigned char oiState)
 {
-    this->oiState = oiState;
+    this->_oiState = oiState;
     printf("[OI_STATE]: %d\n", oiState);
     // Should probably call a callback here (TODO)
 }
@@ -118,6 +121,56 @@ void Sparkoomba::start()
     // Description: Starts the SCI. The Start command must be sent before any other SCI commands. This command puts the SCI in passive mode.
     this->sendCommand(CMD_START,0,0);
     this->setOIState(STATE_PASSIVE);
+}
+bool Sparkoomba::baud(unsigned char baud)
+{
+    // OPCode: 129
+    // Data Bytes: 1 (the baud))
+    switch(baud)
+    {
+        case ROOMBA_BAUD_300:
+            this->_baud = 300;
+            break;
+        case ROOMBA_BAUD_600:
+            this->_baud = 600;
+            break;
+        case ROOMBA_BAUD_1200:
+            this->_baud = 1200;
+            break;
+        case ROOMBA_BAUD_2400:
+            this->_baud = 2400;
+            break;
+        case ROOMBA_BAUD_4800:
+            this->_baud = 4800;
+            break;
+        case ROOMBA_BAUD_9600:
+            this->_baud = 9600;
+            break;
+        case ROOMBA_BAUD_14400:
+            this->_baud = 14400;
+            break;
+        case ROOMBA_BAUD_19200:
+            this->_baud = 19200;
+            break;
+        case ROOMBA_BAUD_28800:
+            this->_baud = 28800;
+            break;
+        case ROOMBA_BAUD_38400:
+            this->_baud = 38400;
+            break;
+        case ROOMBA_BAUD_57600:
+            this->_baud = 57600;
+            break;
+        case ROOMBA_BAUD_115200:
+            this->_baud = 115200;
+            break;
+        default:
+            return false;   // Invalid Baud
+    }
+    unsigned char data[] = {baud};
+    this->sendCommand(CMD_BAUD,data,1);
+    this->begin();
+    return true;
 }
 
 void Sparkoomba::goForward()

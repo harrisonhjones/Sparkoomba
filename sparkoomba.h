@@ -20,7 +20,7 @@ extern "C" {
 #define bumpright (sensorbytes[0] & 0x01)
 #define bumpleft  (sensorbytes[0] & 0x02)
 
-#define SERIAL_BEGIN(baud) Serial.begin(baud)
+#define SERIAL_BEGIN(_baud) Serial.begin(_baud)
 #define SERIAL_SEND(byte) Serial.write(byte)
 
 // Roomba SCI Op Codes
@@ -40,6 +40,20 @@ extern "C" {
 #define CMD_PLAY 141
 #define CMD_SENSORS 142
 #define CMD_FORCE_SEEK_DOCK 143
+
+// Roomba Baud Values
+#define ROOMBA_BAUD_300 0
+#define ROOMBA_BAUD_600 1
+#define ROOMBA_BAUD_1200 2
+#define ROOMBA_BAUD_2400 3
+#define ROOMBA_BAUD_4800 4
+#define ROOMBA_BAUD_9600 5
+#define ROOMBA_BAUD_14400 6
+#define ROOMBA_BAUD_19200 7
+#define ROOMBA_BAUD_28800 8
+#define ROOMBA_BAUD_38400 9
+#define ROOMBA_BAUD_57600 10
+#define ROOMBA_BAUD_115200 11
 
 // Roomba SCI States
 #define STATE_SLEEP 0
@@ -83,9 +97,9 @@ class Sparkoomba
 {
 public:
     Sparkoomba();
-    Sparkoomba(int baud, int ddPin);
-    Sparkoomba(int ddPin, bool automaticMode);
-    Sparkoomba(int baud, int ddPin, bool automaticMode);
+    Sparkoomba(unsigned int _baud, unsigned char _ddPin);
+    Sparkoomba(unsigned char _ddPin, bool automaticMode);
+    Sparkoomba(unsigned int _baud, unsigned char _ddPin, bool automaticMode);
     void begin();
     
     // Hardware Level Roomba Functions
@@ -93,6 +107,7 @@ public:
     
     // SCI Level Roomba Functions
     void start();
+    bool baud(unsigned char baud);
     void goForward();
     void goBackward();
     void spinLeft();
@@ -131,6 +146,7 @@ public:
     unsigned short getBatteryCapacity();
     
     unsigned char getOIState();
+    unsigned int getBaud();
     
     // Callback functions
     int registerCallback(unsigned char sensorType, int (*cbFunc)(void));
@@ -166,9 +182,9 @@ public:
     
 private:
     // Physical Roomba Connection Variables
-    int ddPin;
-    int baud;
-    bool automaticMode;
+    unsigned char _ddPin;
+    unsigned int _baud;
+    bool _automaticMode;
     
     // Roomba Sensor Variables
     unsigned char currSensorData[26];
@@ -176,7 +192,7 @@ private:
     int (*cbFunc[18])();  // A function pointer to callback functions
     
     // Roomba State Variables
-    unsigned char oiState;
+    unsigned char _oiState;
     
     // Callback stuff
     int handleCallback(int sensorNum);

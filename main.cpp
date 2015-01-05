@@ -10,9 +10,10 @@
 #include "sparkoomba.h"
 #include "Serial.h"
 
-/*#define RUN_UNIT_TESTS
+#define RUN_UNIT_TESTS
 #define RUN_UNIT_TEST_SETTER
-#define RUN_UNIT_TEST_CALLBACK*/
+#define RUN_UNIT_TEST_CALLBACK
+#define RUN_UNIT_TEST_COMMANDS
 
 using namespace std;
 
@@ -104,6 +105,7 @@ int main(int argc, char** argv) {
         printf("Unable to open serial port!");*/
     SR1.begin();
     SR1.wakeUp();
+    SR1.baud(ROOMBA_BAUD_600);
     
     //printf("Hello World!\n");
     SR1.updateSensors();
@@ -422,6 +424,89 @@ int main(int argc, char** argv) {
     printf("CALLBACK UNIT TEST FAILURES: %d\n\n",unitTestFailures);
     unitTestFailuresTotal += unitTestFailures;
 #endif 
+#ifdef RUN_UNIT_TEST_COMMANDS
+    unitTestFailures = 0;
+    printf("===== Running Unit Tests for Commands =====\n");
+    printf("Running unit test for Start() Function\n");
+    SR1.start();
+    if(SR1.getOIState() != STATE_PASSIVE)
+        unitTestFailures++;
+    printf("Running unit test for Baud() Function\n");
+    SR1.baud(ROOMBA_BAUD_300);
+    if(SR1.getBaud() != 300)
+    {
+        unitTestFailures++;
+        printf("Failure @ 300 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_600);
+    if(SR1.getBaud() != 600)
+    {
+        unitTestFailures++;
+        printf("Failure @ 600 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_1200);
+    if(SR1.getBaud() != 1200)
+    {
+        unitTestFailures++;
+        printf("Failure @ 1200 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_2400);
+    if(SR1.getBaud() != 2400)
+    {
+        unitTestFailures++;
+        printf("Failure @ 2400 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_4800);
+    if(SR1.getBaud() != 4800)
+    {
+        unitTestFailures++;
+        printf("Failure @ 4800 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_9600);
+    if(SR1.getBaud() != 9600)
+    {
+        unitTestFailures++;
+        printf("Failure @ 9600 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_14400);
+    if(SR1.getBaud() != 14400)
+    {
+        unitTestFailures++;
+        printf("Failure @ 14400 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_19200);
+    if(SR1.getBaud() != 19200)
+    {
+        unitTestFailures++;
+        printf("Failure @ 19200 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_28800);
+    if(SR1.getBaud() != 28800)
+    {
+        unitTestFailures++;
+        printf("Failure @ 28800 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_38400);
+    if(SR1.getBaud() != 38400)
+    {
+        unitTestFailures++;
+        printf("Failure @ 38400 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_57600);
+    if(SR1.getBaud() != 57600)
+    {
+        unitTestFailures++;
+        printf("Failure @ 57600 baud (got %d baud)\n", SR1.getBaud());
+    }
+    SR1.baud(ROOMBA_BAUD_115200);
+    if(SR1.getBaud() != 115200)
+    {
+        unitTestFailures++;
+        printf("Failure @ 115200 baud (got %d baud)\n", SR1.getBaud());
+    }
+    printf("COMMANDS UNIT TEST FAILURES: %d\n\n",unitTestFailures);
+    unitTestFailuresTotal += unitTestFailures;
+#endif
     printf("TOTAL UNIT TEST FAILURES: %d\n\n",unitTestFailuresTotal);
     printf("===== End Unit Tests =====\n");
     printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");

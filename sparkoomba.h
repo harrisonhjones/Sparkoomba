@@ -73,7 +73,7 @@ extern "C" {
 #define CHARGING_ERROR 5
 
 // Sensor Call Backs
-#define CALLBACK_NUM 28
+#define CALLBACK_NUM 35
 #define CB_BUMPS_AND_WHEEL_DROPS 0
 #define CB_WALL 1
 #define CB_CLIFF_LEFT 2
@@ -95,7 +95,6 @@ extern "C" {
 // Other Callbacks
 #define CB_OI_STATE 18
 #define CB_BAUD 20
-// Not Yet Implemented Callbacks
 #define CB_START 19
 #define CB_CONTROL 21
 #define CB_SAFE 22
@@ -103,7 +102,14 @@ extern "C" {
 #define CB_POWER 24
 #define CB_SPOT 25
 #define CB_CLEAN 26
-#define CB_MAX_CLEAN 27
+#define CB_MAX 27
+#define CB_DRIVE 28
+#define CB_MOTORS 29
+#define CB_LEDS 30
+#define CB_SONG 31
+#define CB_PLAY 32
+#define CB_SENSORS 33
+#define CB_FORCE_SEEK_DOCK 34
 
 #define NO_CALLBACK 0
 

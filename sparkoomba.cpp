@@ -120,6 +120,7 @@ void Sparkoomba::cmdStart()
     // State Accepted: ??
     // State Change: passive
     this->sendCommand(CMD_START,0,0);
+    this->handleCallback(CB_START);
     this->setOIState(STATE_PASSIVE);
 }
 bool Sparkoomba::cmdBaud(unsigned char baud)
@@ -193,6 +194,7 @@ bool Sparkoomba::cmdControl()
         return false;
     this->sendCommand(CMD_CONTROL,0,0);
     this->setOIState(STATE_SAFE);
+    this->handleCallback(CB_CONTROL);
     return true;
 }
 bool Sparkoomba::cmdSafe()
@@ -207,6 +209,7 @@ bool Sparkoomba::cmdSafe()
         return false;
     this->sendCommand(CMD_SAFE,0,0);
     this->setOIState(STATE_SAFE);
+    this->handleCallback(CB_SAFE);
     return true;
 }
 bool Sparkoomba::cmdFull()
@@ -222,6 +225,7 @@ bool Sparkoomba::cmdFull()
         return false;
     this->sendCommand(CMD_FULL,0,0);
     this->setOIState(STATE_FULL);
+    this->handleCallback(CB_FULL);
     return true;
 }
 bool Sparkoomba::cmdPower()
@@ -238,6 +242,7 @@ bool Sparkoomba::cmdPower()
         return false;
     this->sendCommand(CMD_POWER,0,0);
     this->setOIState(STATE_SLEEP);
+    this->handleCallback(CB_POWER);
     return true;
 }
 bool Sparkoomba::cmdSpot()
@@ -253,6 +258,7 @@ bool Sparkoomba::cmdSpot()
         return false;
     this->sendCommand(CMD_SPOT,0,0);
     this->setOIState(STATE_PASSIVE);
+    this->handleCallback(CB_SPOT);
     return true;
 }
 bool Sparkoomba::cmdClean()
@@ -268,6 +274,7 @@ bool Sparkoomba::cmdClean()
         return false;
     this->sendCommand(CMD_CLEAN,0,0);
     this->setOIState(STATE_PASSIVE);
+    this->handleCallback(CB_CLEAN);
     return true;
 }
 bool Sparkoomba::cmdMax()
@@ -283,6 +290,7 @@ bool Sparkoomba::cmdMax()
         return false;
     this->sendCommand(CMD_MAX,0,0);
     this->setOIState(STATE_PASSIVE);
+    this->handleCallback(CB_MAX);
     return true;
 }
 bool Sparkoomba::cmdDrive(short velocity, short radius)
@@ -296,6 +304,7 @@ bool Sparkoomba::cmdDrive(short velocity, short radius)
         return false;
     unsigned char data[] = {velocity>>8,velocity,radius>>8,radius};
     this->sendCommand(CMD_DRIVE,data,4);
+    this->handleCallback(CB_DRIVE);
     return true;
 }
 bool Sparkoomba::cmdMotors(bool mainBrush, bool vacuum, bool sideBrush)
@@ -312,9 +321,9 @@ bool Sparkoomba::cmdMotors(bool mainBrush, bool vacuum, bool sideBrush)
     unsigned char motorData = mainBrush << 2 | vacuum << 1 | sideBrush; 
     unsigned char data[] = {motorData};
     this->sendCommand(CMD_MOTORS,data,1);
+    this->handleCallback(CB_MOTORS);
     return true;
 }
-
 bool Sparkoomba::setLEDBit(unsigned char ledId, bool state)
 {
     // A little help from my friends @ http://stackoverflow.com/questions/47981/how-do-you-set-clear-and-toggle-a-single-bit-in-c-c
@@ -342,6 +351,7 @@ bool Sparkoomba::cmdLEDs()
         return false;
     unsigned char data[] = {this->_LEDBits,this->_powerLEDColor,this->_powerLEDIntensity};
     this->sendCommand(CMD_LEDS,data,3);
+    this->handleCallback(CB_LEDS);
     return true;
 }
 void Sparkoomba::setLEDsOff()
@@ -381,6 +391,7 @@ bool Sparkoomba::cmdSong(unsigned char songNum, unsigned char *songData, unsigne
         data[i+2] = songData[i];
     }
     this->sendCommand(CMD_SONG,data,notesNum+2);
+    this->handleCallback(CB_SONG);
     return true;
 }
 bool Sparkoomba::cmdPlay(unsigned char songNum)
@@ -399,6 +410,7 @@ bool Sparkoomba::cmdPlay(unsigned char songNum)
         return false;
     unsigned char data[] = {songNum};
     this->sendCommand(CMD_PLAY,data,1);
+    this->handleCallback(CB_PLAY);
     return true;
 }
 bool Sparkoomba::cmdSensors()
@@ -462,6 +474,9 @@ bool Sparkoomba::cmdSensors()
     #endif
     // Not sure if we should do this each sensor update. It would make sense tho... Make callbacks automatic
     // this->handleCallbacks();
+        
+    this->handleCallback(CB_SENSORS);
+        
     return true;
 }
 bool Sparkoomba::cmdForceSeekDock()
@@ -474,6 +489,7 @@ bool Sparkoomba::cmdForceSeekDock()
     //if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
     //    return false;
     this->sendCommand(CMD_FORCE_SEEK_DOCK,0,0);
+    this->handleCallback(CB_FORCE_SEEK_DOCK);
     return true;
 }
 // Sensor Stuff

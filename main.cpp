@@ -120,6 +120,8 @@ int main(int argc, char** argv) {
     SR1.wakeUp();
     SR1.cmdControl();
     SR1.cmdSafe();
+    SR1.cmdSensors();
+    
     //SR1.cmdDrive(-1500, DRIVE_STRAIGHT);
     //SR1.cmdMotors(true,false,true);
     

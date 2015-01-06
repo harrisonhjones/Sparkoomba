@@ -1,24 +1,24 @@
 #include "sparkoomba.h"
 #include <stdio.h>
 
-#if defined (__cplusplus)
-#warning "Compiling as a C++ Application"
-#else
 #if defined (SPARK)
-#warning "Compiling as Spark Firmware"
-#error "Not Yet Supported"
-#include "application.h"
+    #warning "Compiling as Spark Firmware"
+    #error "Not Yet Supported"
+    #include "application.h"
 #else
-#if defined(ARDUINO) && ARDUINO >= 100
-#warning "Compiling as Arduino Firmware"
-#error "Not Yet Supported"
-#include "Arduino.h"
-#else
-#warning "Compiling as old Arduino Firmware"
-#error "Not Yet Supported"
-#include "WProgram.h"
-#endif
-#endif
+    #if defined(ARDUINO) && ARDUINO >= 100
+        #warning "Compiling as Arduino Firmware"
+        #error "Not Yet Supported"
+        #include "Arduino.h"
+    #else
+        #if defined(ARDUINO)
+            #warning "Compiling as old Arduino Firmware"
+            #error "Not Yet Supported"
+            #include "WProgram.h"
+        #else
+            #warning "Compiling as a Console Application"
+        #endif
+    #endif
 #endif
 
 Sparkoomba::Sparkoomba()
@@ -46,12 +46,10 @@ Sparkoomba::Sparkoomba(unsigned int _baud, unsigned char _ddPin, bool automaticM
     this->_powerLEDColor = 125;         // Orange
     this->_powerLEDIntensity = 255;     // Full Intensity
     
-    #if defined (__cplusplus)
-    printf("Sparkoomba Created\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", _baud, _ddPin, automaticMode);
+    #if (defined (SPARK) || defined (ARDUINO))
+        #warning "Might be a good place for some debugging"
     #else
-    #if defined (SPARK) || defined (ARDUINO))
-    #warning "Might be a good place for some debugging"
-    #endif
+        printf("Sparkoomba Created\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", _baud, _ddPin, automaticMode);
     #endif
 }
 unsigned char Sparkoomba::getOIState()
@@ -64,29 +62,25 @@ unsigned int Sparkoomba::getBaud()
 }
 void Sparkoomba::begin()
 {
-    #if defined (__cplusplus)
-    printf("[ROOMBA_ACTION] Begin Called\n");
+    #if (defined (SPARK) || defined (ARDUINO))
+        SERIAL_BEGIN(this->_baud);
+        pinMode(this->_ddPin, OUTPUT);
+        digitalWrite(this->_ddPin, HIGH);
     #else
-    #if defined (SPARK) || defined (ARDUINO))
-    SERIAL_BEGIN(this->_baud);
-    pinMode(this->_ddPin, OUTPUT);
-    digitalWrite(this->_ddPin, HIGH);
-    #endif
+        printf("[ROOMBA_ACTION] Begin Called\n");
     #endif
 }
 
 void Sparkoomba::wakeUp()
 {
-    #if defined (__cplusplus)
-    printf("[ROOMBA_ACTION] WAKE UP NEO\n");
+    #if (defined (SPARK) || defined (ARDUINO))
+        // wake up the robot
+        digitalWrite(this->_ddPin, LOW);                         // 500ms LOW signal wakes up the robot (docs says 100ms is enough))
+        delay(500);
+        digitalWrite(this->_ddPin, HIGH);                        // Send it back HIGH once the robot is awake
+        delay(2000);
     #else
-    #if defined (SPARK) || defined (ARDUINO))
-    // wake up the robot
-    digitalWrite(this->_ddPin, LOW);                         // 500ms LOW signal wakes up the robot (docs says 100ms is enough))
-    delay(500);
-    digitalWrite(this->_ddPin, HIGH);                        // Send it back HIGH once the robot is awake
-    delay(2000);
-    #endif
+        printf("[ROOMBA_ACTION] WAKE UP NEO\n");
     #endif
     this->setOIState(STATE_OFF);
     this->cmdStart();
@@ -98,25 +92,23 @@ void Sparkoomba::setOIState(unsigned char oiState)
 }
 void Sparkoomba::sendCommand(unsigned char cmd, unsigned char *dataOut,  unsigned int dataOutNum)
 {
-    #if defined (__cplusplus)
-    printf("[SEND_COMMAND] %d: [", cmd);
-    for(int i = 0; i<dataOutNum; i++)
-    {
-        if(i == dataOutNum-1)
-            printf("0x%X",dataOut[i]);
-        else
-            printf("0x%X,",dataOut[i]);
-    }
-    printf("]\n");
+    #if (defined (SPARK) || defined (ARDUINO))
+        // wake up the robot
+        SERIAL_SEND(cmd);
+        for(int i = 0; i<dataOutNum; i++)
+        {
+            SERIAL_SEND(dataOut[i]);
+        }
     #else
-    #if defined (SPARK) || defined (ARDUINO))
-    // wake up the robot
-    SERIAL_SEND(cmd);
-    for(int i = 0; i<dataOutNum; i++)
-    {
-        SERIAL_SEND(dataOut[i]);
-    }
-    #endif
+        printf("[SEND_COMMAND] %d: [", cmd);
+        for(int i = 0; i<dataOutNum; i++)
+        {
+           if(i == dataOutNum-1)
+               printf("0x%X",dataOut[i]);
+           else
+               printf("0x%X,",dataOut[i]);
+        }
+        printf("]\n");   
     #endif
 }
 void Sparkoomba::cmdStart()
@@ -429,46 +421,44 @@ bool Sparkoomba::cmdSensors()
     memcpy(this->prevSensorData,this->currSensorData,26);
     
     // 2. Updates current sensor data
-    #if defined (__cplusplus)
-    // Populate the sensors with arbitrary data
-    this->currSensorData[0] = 0x00;    // 0    Bumps and Wheel Drops
-    this->currSensorData[1] = 0x00;    //1    Wall
-    this->currSensorData[2] = 0x00;    //2    Cliff Left
-    this->currSensorData[3] = 0x00;    //3    Cliff Front Left
-    this->currSensorData[4] = 0x00;    //4    Cliff Front Right
-    this->currSensorData[5] = 0x00;    //5    Cliff Right
-    this->currSensorData[6] = 0x00;    //6    Virtual Wall
-    this->currSensorData[7] = 0x00;    //7    Overcurrents
-    this->currSensorData[8] = 0x00;    //8    Unused
-    this->currSensorData[9] = 0x00;    //9    Unused
-    this->currSensorData[10] = 0x00;   //10   IR Byte
-    this->currSensorData[11] = 0x00;   //11   Buttons
-    this->currSensorData[12] = 0x00;   //12   Distance MSB
-    this->currSensorData[13] = 0x00;   //13   Distance LSB
-    this->currSensorData[14] = 0x00;   //14    Angle MSB
-    this->currSensorData[15] = 0x00;   //15   Angle LSB
-    this->currSensorData[16] = 0x01;   //16   Charging State
-    this->currSensorData[17] = 0x3B;   //17   Voltage MSB  (15.2V)
-    this->currSensorData[18] = 0x60;   //18   Voltage LSB
-    this->currSensorData[19] = 0xFF;   //19   Current MSB  (-200 mA - discharging)
-    this->currSensorData[20] = 0x38;   //20   Current LSB
-    this->currSensorData[21] = 0x1D;   //21   Battery Temp (29 degrees C)
-    this->currSensorData[22] = 0x09;   //22   Battery Charge MSB   (2,500 mAh)
-    this->currSensorData[23] = 0xC4;   //23   Battery Charge LSB
-    this->currSensorData[24] = 0x0B;   //24   Battery Capacity MSB (3,000 mAh)
-    this->currSensorData[25] = 0xB8;   // 25   Battery Capacity LSB
+    #if (defined (SPARK) || defined (ARDUINO))
+        delay(100);                                       // wait for sensors 
+        int i = 0;
+        while(SERIAL_AVILABLE()) {
+          int c = SERIAL_READ();
+          if( c==-1 ) {
+              return false;
+          }
+          this->currSensorData[i++] = c;
+        } 
     #else
-    #if defined (SPARK) || defined (ARDUINO))
-    delay(100);                                       // wait for sensors 
-    int i = 0;
-    while(SERIAL_AVILABLE()) {
-      int c = SERIAL_READ();
-      if( c==-1 ) {
-          return false;
-      }
-      this->currSensorData[i++] = c;
-    } 
-    #endif
+        // Populate the sensors with arbitrary data
+        this->currSensorData[0] = 0x00;    // 0    Bumps and Wheel Drops
+        this->currSensorData[1] = 0x00;    //1    Wall
+        this->currSensorData[2] = 0x00;    //2    Cliff Left
+        this->currSensorData[3] = 0x00;    //3    Cliff Front Left
+        this->currSensorData[4] = 0x00;    //4    Cliff Front Right
+        this->currSensorData[5] = 0x00;    //5    Cliff Right
+        this->currSensorData[6] = 0x00;    //6    Virtual Wall
+        this->currSensorData[7] = 0x00;    //7    Overcurrents
+        this->currSensorData[8] = 0x00;    //8    Unused
+        this->currSensorData[9] = 0x00;    //9    Unused
+        this->currSensorData[10] = 0x00;   //10   IR Byte
+        this->currSensorData[11] = 0x00;   //11   Buttons
+        this->currSensorData[12] = 0x00;   //12   Distance MSB
+        this->currSensorData[13] = 0x00;   //13   Distance LSB
+        this->currSensorData[14] = 0x00;   //14    Angle MSB
+        this->currSensorData[15] = 0x00;   //15   Angle LSB
+        this->currSensorData[16] = 0x01;   //16   Charging State
+        this->currSensorData[17] = 0x3B;   //17   Voltage MSB  (15.2V)
+        this->currSensorData[18] = 0x60;   //18   Voltage LSB
+        this->currSensorData[19] = 0xFF;   //19   Current MSB  (-200 mA - discharging)
+        this->currSensorData[20] = 0x38;   //20   Current LSB
+        this->currSensorData[21] = 0x1D;   //21   Battery Temp (29 degrees C)
+        this->currSensorData[22] = 0x09;   //22   Battery Charge MSB   (2,500 mAh)
+        this->currSensorData[23] = 0xC4;   //23   Battery Charge LSB
+        this->currSensorData[24] = 0x0B;   //24   Battery Capacity MSB (3,000 mAh)
+        this->currSensorData[25] = 0xB8;   // 25   Battery Capacity LSB
     #endif
     // Not sure if we should do this each sensor update. It would make sense tho... Make callbacks automatic
     // this->handleCallbacks();
@@ -712,13 +702,15 @@ int Sparkoomba::registerCallback(unsigned char sensorType, int (*cbFunc)(void))
 {
     if(sensorType > 25)
     {
-        //printf("Invalid sensor type");
-        return -1;
+        return -1;  // Invalid sensor type
     }
     else
     {
         this->cbFunc[sensorType] = cbFunc;
-        //printf("Callback function of sensor (%d) registered (%d = %d?)", sensorType, (int) this->cbFunc[sensorType], (int) cbFunc);
+        #if (defined (SPARK) || defined (ARDUINO))
+        #else
+            printf("Callback function of sensor (%d) registered (%d = %d?)", sensorType, (int) this->cbFunc[sensorType], (int) cbFunc);
+        #endif
     }
 }
 
@@ -726,14 +718,20 @@ int Sparkoomba::handleCallback(unsigned char callbackNum)
 {
     if (this->cbFunc[callbackNum] == 0)
     {
-        //printf("No callback registered for sensor #%d\n",callbackNum);
+        #if (defined (SPARK) || defined (ARDUINO))
+        #else
+            printf("No callback registered for sensor #%d\n",callbackNum);
+        #endif
     }
     else
     {
         int result = (this->cbFunc[callbackNum]());
         if(result != 1)
         {
-            //printf("Callback registered for sensor #%d failed with result: %d\n",callbackNum, result);
+            #if (defined (SPARK) || defined (ARDUINO))
+            #else
+                printf("Callback registered for sensor #%d failed with result: %d\n",callbackNum, result);
+            #endif
             return 1;
         }
     }

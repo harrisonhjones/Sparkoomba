@@ -362,7 +362,35 @@ void Sparkoomba::setPowerLED(unsigned char color, unsigned char intensity)
     this->_powerLEDColor = color;
     this->_powerLEDIntensity = intensity;
 }
-bool Sparkoomba::cmdSong(unsigned char songNum, unsigned char *songNotes, unsigned char *songDuration){}
+bool Sparkoomba::cmdSong(unsigned char songNum, unsigned char *songData, unsigned char notesNum)
+{
+    // OPCode: 140
+    // Data Bytes: 1
+    // Description: Plays one of 16 songs, as specified by an earlier Song 
+    // command. If the requested song has not been specified yet, the Play 
+    // command does nothing. The SCI must be in safe or full mode to accept this
+    // command. This command does not change the mode.
+    // State Accepted: passive or safe or full
+    // State Change: none
+    
+    // Serial sequence: [140] [Song Number] [Song Length] [Note Number 1] 
+    // [Note Duration 1] [Note Number 2] [Note Duration 2] etc.
+    if(notesNum > 16)    // Max 16 notes per song
+        return false;
+    if((notesNum % 2) != 0)
+        return false;
+    if((this->getOIState() != STATE_PASSIVE) && (this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    unsigned char data[notesNum+2];
+    data[0] = songNum;
+    data[1] = notesNum;
+    for(unsigned char i = 0; i<notesNum; i++)
+    {
+        data[i+2] = songData[i];
+    }
+    this->sendCommand(CMD_SONG,data,notesNum+2);
+    return true;
+}
 bool Sparkoomba::cmdPlay(unsigned char songNum)
 {
     // OPCode: 141

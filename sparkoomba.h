@@ -146,7 +146,7 @@ public:
     bool cmdDrive(short velocity, short radius);
     bool cmdMotors(bool mainBrush, bool vacuum, bool sideBrush);
     bool cmdLEDs();
-    bool cmdSong(unsigned char songNum, unsigned char *songNotes, unsigned char *songDuration);
+    bool cmdSong(unsigned char songNum, unsigned char *songNotes, unsigned char songDuration);
     bool cmdPlay(unsigned char songNum);
     bool cmdSensors();
     bool cmdForceSeekDock();

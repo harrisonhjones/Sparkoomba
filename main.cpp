@@ -136,6 +136,9 @@ int main(int argc, char** argv) {
     
     SR1.cmdPlay(11);
     
+    //unsigned char songNum, unsigned char *songData, unsigned char notesNum
+    unsigned char song[] = {3,4,11,44,127,99,44};
+    SR1.cmdSong(4,song,sizeof(song));
     
     //printf("Size of short: %\n", sizeof(short));
     //printf("Charging: 0x%x (%d) \n", SR1.getChargingState(), SR1.getChargingState());

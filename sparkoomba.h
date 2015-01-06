@@ -22,6 +22,8 @@ extern "C" {
 
 #define SERIAL_BEGIN(_baud) Serial.begin(_baud)
 #define SERIAL_SEND(byte) Serial.write(byte)
+#define SERIAL_AVILABLE() Serial.available()
+#define SERIAL_READ() Serial.read()
 
 // Roomba SCI Op Codes
 #define CMD_START 128

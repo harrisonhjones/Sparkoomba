@@ -381,43 +381,27 @@ bool Sparkoomba::cmdPlay(unsigned char songNum)
     this->sendCommand(CMD_PLAY,data,1);
     return true;
 }
-bool Sparkoomba::cmdForceSeekDock()
-{
-    // OPCode: 143
-    // Data Bytes: 0
-    // Description: See SCI manual. This command is weird
-    // State Accepted: any (kind of))
-    // State Change: ??
-    //if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
-    //    return false;
-    this->sendCommand(CMD_FORCE_SEEK_DOCK,0,1);
-    return true;
-}
-
 bool Sparkoomba::cmdSensors()
 {
-    /*
-    Serial1.write(142);
-  Serial1.write(0);                                 // sensor packet 1, 10 bytes
-  delay(100);                                       // wait for sensors 
-  int i = 0;
-  while(Serial1.available()) {
-    int c = Serial1.read();
-    if( c==-1 ) {
-      for( int i=0; i<5; i ++ ) {                   // say we had an error via the LED
-        digitalWrite(ledPin, HIGH); 
-        delay(50);
-        digitalWrite(ledPin, LOW);  
-        delay(50);
-      }
-    }
-    sensorbytes[i++] = c;
-  }    
-  */
+    // OPCode: 142
+    // Data Bytes: 1
+    // Description: Requests the SCI to send a packet of sensor data bytes. The
+    // user can select one of four different sensor packets. The sensor data 
+    // packets are explained in more detail in the next section. The SCI must be
+    // in passive, safe, or full mode to accept this command. This command does 
+    // not change the mode.
+    // State Accepted: safe or full
+    // State Change: none
+    if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    unsigned char data[] = {0};
+    this->sendCommand(CMD_SENSORS,data,1);
+    
     // 1. Loads current sensor data into prevSensorData
     memcpy(this->prevSensorData,this->currSensorData,26);
     
     // 2. Updates current sensor data
+    #if defined (__cplusplus)
     // Populate the sensors with arbitrary data
     this->currSensorData[0] = 0x00;    // 0    Bumps and Wheel Drops
     this->currSensorData[1] = 0x00;    //1    Wall
@@ -445,13 +429,35 @@ bool Sparkoomba::cmdSensors()
     this->currSensorData[23] = 0xC4;   //23   Battery Charge LSB
     this->currSensorData[24] = 0x0B;   //24   Battery Capacity MSB (3,000 mAh)
     this->currSensorData[25] = 0xB8;   // 25   Battery Capacity LSB
-    
+    #else
+    #if defined (SPARK) || defined (ARDUINO))
+    delay(100);                                       // wait for sensors 
+    int i = 0;
+    while(SERIAL_AVILABLE()) {
+      int c = SERIAL_READ();
+      if( c==-1 ) {
+          return false;
+      }
+      this->currSensorData[i++] = c;
+    } 
+    #endif
+    #endif
     // Not sure if we should do this each sensor update. It would make sense tho... Make callbacks automatic
     // this->handleCallbacks();
-    
     return true;
 }
-
+bool Sparkoomba::cmdForceSeekDock()
+{
+    // OPCode: 143
+    // Data Bytes: 0
+    // Description: See SCI manual. This command is weird
+    // State Accepted: any (kind of))
+    // State Change: ??
+    //if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+    //    return false;
+    this->sendCommand(CMD_FORCE_SEEK_DOCK,0,0);
+    return true;
+}
 // Sensor Stuff
 unsigned char Sparkoomba::getBumpsWheelDrops()
 {

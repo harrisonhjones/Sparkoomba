@@ -120,9 +120,19 @@ int main(int argc, char** argv) {
     SR1.wakeUp();
     SR1.cmdControl();
     SR1.cmdSafe();
-    SR1.cmdDrive(-1500, DRIVE_STRAIGHT);
-    SR1.cmdMotors(true,false,true);
+    //SR1.cmdDrive(-1500, DRIVE_STRAIGHT);
+    //SR1.cmdMotors(true,false,true);
     
+    SR1.setLEDBit(LED_STATUS_RED,true);
+    SR1.setLEDBit(LED_SPOT,true);
+    SR1.setLEDBit(LED_MAX,true);
+    SR1.cmdLEDs();
+    SR1.setLEDBit(LED_CLEAN,true);
+    SR1.setLEDBit(LED_MAX,false);
+    SR1.setPowerLED(10,55);
+    SR1.cmdLEDs();
+    SR1.setLEDsOff();
+    SR1.cmdLEDs();
     
     
     //printf("Size of short: %\n", sizeof(short));

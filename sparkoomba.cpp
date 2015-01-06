@@ -42,14 +42,9 @@ Sparkoomba::Sparkoomba(unsigned int _baud, unsigned char _ddPin, bool automaticM
     this->lastCommand = 255;
     this->lastCommandSuccess = false;
     
-    this->_statusRedLED = false;
-    this->_statusGreenLED = false;
-    this->_spotLED = false;
-    this->_cleanLED = false;
-    this->_maxLED = false;
-    this->_dirtDetectLED = false;
-    this->_powerLEDcolor = 125; // Orange
-    this->_powerLEDintensity = 255; // Full Intensity
+    this->_LEDBits = 0;                 // All Off
+    this->_powerLEDColor = 125;         // Orange
+    this->_powerLEDIntensity = 255;     // Full Intensity
     
     #if defined (__cplusplus)
     printf("Sparkoomba Created\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", _baud, _ddPin, automaticMode);
@@ -327,9 +322,46 @@ bool Sparkoomba::cmdMotors(bool mainBrush, bool vacuum, bool sideBrush)
     this->sendCommand(CMD_MOTORS,data,1);
     return true;
 }
-bool Sparkoomba::cmdLEDs(unsigned char ledId, bool state){};
-bool Sparkoomba::cmdLEDsOff(){};
-bool Sparkoomba::cmdPowerLED(unsigned char color, unsigned char intensity){}
+
+bool Sparkoomba::setLEDBit(unsigned char ledId, bool state)
+{
+    // A little help from my friends @ http://stackoverflow.com/questions/47981/how-do-you-set-clear-and-toggle-a-single-bit-in-c-c
+    if(ledId > 5)
+        return false;
+    if(state)
+        this->_LEDBits |= 1 << ledId;
+    else
+        this->_LEDBits &= ~(1 << ledId);
+    return true;
+}
+bool Sparkoomba::cmdLEDs()
+{
+    // OPCode: 139
+    // Data Bytes: 1
+    // Description: Controls Roomba’s LEDs. The state of each of the spot, clean,
+    // max, and dirt detect LEDs is specified by one bit in the first data
+    // byte. The color of the status LED is specified by two bits in the first
+    // data byte. The power LED is specified by two data bytes, one for the
+    // color and one for the intensity. The SCI must be in safe or full mode to
+    // accept this command. This command does not change the mode.
+    // State Accepted: safe or full
+    // State Change: none
+    if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    unsigned char data[] = {this->_LEDBits,this->_powerLEDColor,this->_powerLEDIntensity};
+    this->sendCommand(CMD_LEDS,data,3);
+    return true;
+}
+void Sparkoomba::setLEDsOff()
+{
+    this->_LEDBits = 0;
+    this->_powerLEDIntensity = 0;
+}
+void Sparkoomba::setPowerLED(unsigned char color, unsigned char intensity)
+{
+    this->_powerLEDColor = color;
+    this->_powerLEDIntensity = intensity;
+}
 bool Sparkoomba::cmdSong(unsigned char songNum, unsigned char *songNotes, unsigned char *songDuration){}
 bool Sparkoomba::cmdPlay(unsigned char songNum){}
 bool Sparkoomba::cmdForceSeekDock()

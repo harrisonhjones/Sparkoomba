@@ -143,9 +143,7 @@ public:
     bool cmdMax();
     bool cmdDrive(short velocity, short radius);
     bool cmdMotors(bool mainBrush, bool vacuum, bool sideBrush);
-    bool cmdLEDs(unsigned char ledId, bool state);
-    bool cmdLEDsOff();
-    bool cmdPowerLED(unsigned char color, unsigned char intensity);
+    bool cmdLEDs();
     bool cmdSong(unsigned char songNum, unsigned char *songNotes, unsigned char *songDuration);
     bool cmdPlay(unsigned char songNum);
     bool cmdSensors();
@@ -186,6 +184,9 @@ public:
     
     // Object Setters
     void setOIState(unsigned char oiState);
+    bool setLEDBit(unsigned char ledId, bool state);
+    void setLEDsOff();
+    void setPowerLED(unsigned char color, unsigned char intensity);
     
     // Sensor Setters
     #ifdef ALLOWSENSOROVERRIDE
@@ -254,14 +255,9 @@ private:
     unsigned short getBatteryCapacity(bool oldData);
     
     // LED Variables
-    bool _statusRedLED;
-    bool _statusGreenLED;
-    bool _spotLED;
-    bool _cleanLED;
-    bool _maxLED;
-    bool _dirtDetectLED;
-    unsigned char _powerLEDcolor;
-    unsigned char _powerLEDintensity;
+    unsigned char _LEDBits;
+    unsigned char _powerLEDColor;
+    unsigned char _powerLEDIntensity;
 };
 
 

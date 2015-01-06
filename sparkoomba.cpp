@@ -396,6 +396,24 @@ bool Sparkoomba::cmdForceSeekDock()
 
 bool Sparkoomba::cmdSensors()
 {
+    /*
+    Serial1.write(142);
+  Serial1.write(0);                                 // sensor packet 1, 10 bytes
+  delay(100);                                       // wait for sensors 
+  int i = 0;
+  while(Serial1.available()) {
+    int c = Serial1.read();
+    if( c==-1 ) {
+      for( int i=0; i<5; i ++ ) {                   // say we had an error via the LED
+        digitalWrite(ledPin, HIGH); 
+        delay(50);
+        digitalWrite(ledPin, LOW);  
+        delay(50);
+      }
+    }
+    sensorbytes[i++] = c;
+  }    
+  */
     // 1. Loads current sensor data into prevSensorData
     memcpy(this->prevSensorData,this->currSensorData,26);
     

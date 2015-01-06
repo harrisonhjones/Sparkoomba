@@ -103,9 +103,9 @@ void Sparkoomba::sendCommand(unsigned char cmd, unsigned char *dataOut,  unsigne
     for(int i = 0; i<dataOutNum; i++)
     {
         if(i == dataOutNum-1)
-            printf("%X",dataOut[i]);
+            printf("0x%X",dataOut[i]);
         else
-            printf("%X,",dataOut[i]);
+            printf("0x%X,",dataOut[i]);
     }
     printf("]\n");
     #else
@@ -363,7 +363,24 @@ void Sparkoomba::setPowerLED(unsigned char color, unsigned char intensity)
     this->_powerLEDIntensity = intensity;
 }
 bool Sparkoomba::cmdSong(unsigned char songNum, unsigned char *songNotes, unsigned char *songDuration){}
-bool Sparkoomba::cmdPlay(unsigned char songNum){}
+bool Sparkoomba::cmdPlay(unsigned char songNum)
+{
+    // OPCode: 141
+    // Data Bytes: 1
+    // Description: Plays one of 16 songs, as specified by an earlier Song 
+    // command. If the requested song has not been specified yet, the Play 
+    // command does nothing. The SCI must be in safe or full mode to accept this
+    // command. This command does not change the mode.
+    // State Accepted: safe or full
+    // State Change: none
+    if(songNum > 15)    // Only 16 songs
+        return false;
+    if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
+        return false;
+    unsigned char data[] = {songNum};
+    this->sendCommand(CMD_PLAY,data,1);
+    return true;
+}
 bool Sparkoomba::cmdForceSeekDock()
 {
     // OPCode: 143

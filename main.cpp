@@ -134,6 +134,8 @@ int main(int argc, char** argv) {
     SR1.setLEDsOff();
     SR1.cmdLEDs();
     
+    SR1.cmdPlay(11);
+    
     
     //printf("Size of short: %\n", sizeof(short));
     //printf("Charging: 0x%x (%d) \n", SR1.getChargingState(), SR1.getChargingState());

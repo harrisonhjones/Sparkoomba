@@ -179,6 +179,8 @@ public:
     unsigned short getBatteryCharge();
     unsigned short getBatteryCapacity();
     
+    float getBatteryPercentage();
+    
     unsigned char getOIState();
     unsigned int getBaud();
     

@@ -59,7 +59,7 @@ void Sparkoomba::begin()
         pinMode(this->_ddPin, OUTPUT);
         digitalWrite(this->_ddPin, HIGH);
     #else
-        printf("[DEBUG] Sparkoomba Begin()\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", _baud, _ddPin, automaticMode);
+        printf("[DEBUG] Sparkoomba Begin()\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", this->_baud, this->_ddPin, this->_automaticMode);
     #endif
 }
 
@@ -710,6 +710,10 @@ unsigned short Sparkoomba::getBatteryCapacity(bool oldData)
         return (this->prevSensorData[24]<<8) + this->prevSensorData[25];
     else
         return (this->currSensorData[24]<<8) + this->currSensorData[25];
+}
+float Sparkoomba::getBatteryPercentage()
+{
+    return (float)this->getBatteryCharge() / (float)this->getBatteryCapacity() * 100;
 }
 
 int Sparkoomba::registerCallback(unsigned char sensorType, int (*cbFunc)(void))

@@ -3,7 +3,6 @@
 
 #if defined (SPARK)
     #warning "Compiling as Spark Firmware"
-    #error "Not Yet Supported"
     #include "application.h"
 #else
     #if defined(ARDUINO) && ARDUINO >= 100
@@ -25,14 +24,6 @@ Sparkoomba::Sparkoomba()
 {
     Sparkoomba(57600,0, false);
 }
-Sparkoomba::Sparkoomba(unsigned int _baud, unsigned char _ddPin)
-{
-    Sparkoomba(_baud, _ddPin, false);
-}
-Sparkoomba::Sparkoomba(unsigned char _ddPin, bool automaticMode)
-{
-    Sparkoomba(57600, _ddPin, automaticMode);
-}
 Sparkoomba::Sparkoomba(unsigned int _baud, unsigned char _ddPin, bool automaticMode)
 {
     this->_baud = _baud;
@@ -45,12 +36,6 @@ Sparkoomba::Sparkoomba(unsigned int _baud, unsigned char _ddPin, bool automaticM
     this->_LEDBits = 0;                 // All Off
     this->_powerLEDColor = 125;         // Orange
     this->_powerLEDIntensity = 255;     // Full Intensity
-    
-    #if (defined (SPARK) || defined (ARDUINO))
-        #warning "Might be a good place for some debugging"
-    #else
-        printf("Sparkoomba Created\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", _baud, _ddPin, automaticMode);
-    #endif
 }
 unsigned char Sparkoomba::getOIState()
 {
@@ -63,11 +48,18 @@ unsigned int Sparkoomba::getBaud()
 void Sparkoomba::begin()
 {
     #if (defined (SPARK) || defined (ARDUINO))
+        Serial.print("[Info] Sparkoomba Created. Baud: ");
+        Serial.print(this->_baud);
+        Serial.print(", DDPin: ");
+        Serial.print(this->_ddPin);
+        Serial.print(", Mode: ");
+        Serial.println(this->_automaticMode);
+        
         SERIAL_BEGIN(this->_baud);
         pinMode(this->_ddPin, OUTPUT);
         digitalWrite(this->_ddPin, HIGH);
     #else
-        printf("[ROOMBA_ACTION] Begin Called\n");
+        printf("[DEBUG] Sparkoomba Begin()\nBaud: %d\n_ddPin: %d\nAutomatic Mode: %d\n", _baud, _ddPin, automaticMode);
     #endif
 }
 
@@ -424,6 +416,10 @@ bool Sparkoomba::cmdSensors()
     // not change the mode.
     // State Accepted: safe or full
     // State Change: none
+    
+    // Serial.print("[Warning] Failed @ 1. OIState: ");
+    // Serial.println(this->getOIState());
+
     if((this->getOIState() != STATE_SAFE) && (this->getOIState() != STATE_FULL))
         return false;
     unsigned char data[] = {0};
@@ -439,7 +435,9 @@ bool Sparkoomba::cmdSensors()
         while(SERIAL_AVILABLE()) {
           int c = SERIAL_READ();
           if( c==-1 ) {
-              return false;
+            // Serial.print("[Warning] Failed @ 2. OIState: ");
+            // Serial.println(this->getOIState());
+            return false;
           }
           this->currSensorData[i++] = c;
         } 

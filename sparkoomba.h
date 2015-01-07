@@ -20,10 +20,10 @@ extern "C" {
 #define bumpright (sensorbytes[0] & 0x01)
 #define bumpleft  (sensorbytes[0] & 0x02)
 
-#define SERIAL_BEGIN(_baud) Serial.begin(_baud)
-#define SERIAL_SEND(byte) Serial.write(byte)
-#define SERIAL_AVILABLE() Serial.available()
-#define SERIAL_READ() Serial.read()
+#define SERIAL_BEGIN(_baud) Serial1.begin(_baud)
+#define SERIAL_SEND(byte) Serial1.write(byte)
+#define SERIAL_AVILABLE() Serial1.available()
+#define SERIAL_READ() Serial1.read()
 
 // Roomba SCI Op Codes
 #define CMD_START 128
@@ -131,8 +131,6 @@ class Sparkoomba
 {
 public:
     Sparkoomba();
-    Sparkoomba(unsigned int _baud, unsigned char _ddPin);
-    Sparkoomba(unsigned char _ddPin, bool automaticMode);
     Sparkoomba(unsigned int _baud, unsigned char _ddPin, bool automaticMode);
     void begin();
     
